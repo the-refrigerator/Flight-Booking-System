@@ -5,6 +5,7 @@ CXX := g++ # Change this to your compiler (e.g., g++ for GCC on Linux, or cl for
 
 # Flags
 CXXFLAGS := -Wall
+LDFLAGS := -l sqlite3
 
 # Directories
 SRC_DIR := src
@@ -21,10 +22,10 @@ EXECUTABLE := $(BIN_DIR)/main
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ_FILES)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LDFLAGS)
 
 # Cleanup
 clean:
