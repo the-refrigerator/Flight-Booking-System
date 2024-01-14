@@ -1,3 +1,15 @@
+#ifndef FLIGHT_H
+#define FLIGHT_H
+
+#include <iostream>
+#include <sqlite3.h>
+#include <chrono>
+#include <ctime>
+#include <string>
+#include "models.hpp"
+
+using namespace std;
+
 class Flight {
 public:
     Flight (time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
@@ -94,3 +106,5 @@ private:
     string arrivalAirport;
     int capacity;
 };
+
+#endif // !FLIGHT_H

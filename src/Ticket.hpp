@@ -1,3 +1,12 @@
+#ifndef TICKET_H
+#define TICKET_H
+
+#include <sqlite3.h>
+#include <chrono>
+#include <string>
+
+using namespace std;
+
 class Ticket {
 public:
     Ticket (int flightNumber, int passportNumber, string seatNumber, double price) {
@@ -23,3 +32,5 @@ private:
     string seatNumber;
     double price;
 };
+
+#endif // !TICKET_H

@@ -1,11 +1,8 @@
-#pragma once
+#ifndef MDOELS_H
+#define MDOELS_H
+
 #include <iostream>
 #include <sqlite3.h>
-#include <chrono>
-#include <ctime>
-#include <string>
-#include <system_error>
-#include <vector>
 
 using namespace std;
 
@@ -65,3 +62,5 @@ private:
         this->db = db;
     }
 };
+
+#endif // !MDOELS_H

@@ -1,3 +1,12 @@
+#ifndef PASSENGER_H
+#define PASSENGER_H
+
+#include <sqlite3.h>
+#include <chrono>
+#include <string>
+
+using namespace std;
+
 class Passenger {
 public:
     Passenger (string firstName, string lastName, string address, string phoneNumber, string email, int age) {
@@ -98,3 +107,5 @@ private:
     }
 
 };
+
+#endif // !PASSENGER_H
