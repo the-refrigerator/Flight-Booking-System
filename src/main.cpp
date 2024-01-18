@@ -5,6 +5,7 @@
 #include "Passenger.hpp"
 #include "DataBaseConnection.hpp"
 #include<cctype>
+#include "model.hpp"
 // #include "Flight.hpp"
 //this file has errors
 
@@ -14,6 +15,7 @@
 
 using namespace std;
 
+const string password="Airline167";
 
 void PassengerAlgorithm(){
     char ans;
@@ -24,7 +26,7 @@ void PassengerAlgorithm(){
     cout<<"passport number: "<<p->getPassportNumber()<<endl;
 
     do{
-    cout<<"Have you been on our flights before?(y/m): ";
+    cout<<"Have you been on our flights before?(y/n): ";
     cin>>ans;
     }while(ans!='n' && ans!='N' && ans!='y' && ans!='Y');
 
@@ -44,7 +46,7 @@ void PassengerAlgorithm(){
         }
         else if(choice==3){
              cout<<"Please enter your phone number(+### ###...): "<<endl;
-            cin>>word;
+            getline(cin,word);
             // p=getPassengerByPhoneNumber(word);
         }
 
@@ -56,12 +58,57 @@ void PassengerAlgorithm(){
 
 }
 
+void DirectorAlgorithm(){
+    string pass;
+
+    cout<<"Enter password to verify your identity: ";
+    cin>>pass;
+
+    if(pass==password){
+        char status;
+        string Lname, Fname, Address, Number, Email;
+        int Age;
+
+        do{
+        cout<<"Are you new or old? (n/o) ";
+        cin>>status;
+        }while(status!='n' && status!='N' && status!='o' && status!='O');
+        
+
+        if(status=='N' || status=='n'){
+            cout<<"Please fill the following:\nName: ";
+            cin.clear();
+
+            getline(cin,Fname);
+
+            cout<<"Last name: ";
+            getline(cin,Lname);
+
+            cout<<"Address: ";
+            getline(cin,Address);
+
+            cout<<"Age: ";
+            cin>>Age;
+
+            cout<<"Phone Number: ";
+            getline(cin, Number);
+
+            cout<<"Email: ";
+            getline(cin, Email);
+
+            Director* d=Director::create(Fname, Lname, Address, Number, Email, Age);
+            d->printDirector();
+        }
+    }
+    else
+        cout<<"Wrong password!";
+        
+}
 
 int main() {
 
     int input;
     char person='k';
-    const string password="Airline167";
 
 
     cout<<"enter 0000 to exit: "; /*idk how to terminate the program upon 0000*/
@@ -76,7 +123,8 @@ int main() {
 
     if (person=='p' || person=='P')
         PassengerAlgorithm();
-    
+    else if (person=='d' || person=='D')
+        DirectorAlgorithm();
     
     // Passenger* p = Passenger::create("John", "Doe", "123 Main St", "1234567890", "exmaple@email.com", 21);
 

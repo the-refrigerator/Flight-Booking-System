@@ -18,7 +18,7 @@ public:
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "INSERT INTO Directors (idNumber, firstName, lastName, address, phoneNumber, email, age) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        const char* query = "INSERT INTO directors (idNumber, firstName, lastName, address, phoneNumber, email, age) VALUES (?, ?, ?, ?, ?, ?, ?)";
         long rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
@@ -56,7 +56,7 @@ public:
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "SELECT * FROM Directors";
+        const char* query = "SELECT * FROM directors";
         int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
@@ -96,7 +96,7 @@ public:
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "SELECT * FROM Directors WHERE idNumber = ?";
+        const char* query = "SELECT * FROM directors WHERE idNumber = ?";
         int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
@@ -126,7 +126,7 @@ public:
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "UPDATE Directors SET firstName = ?, lastName = ?, address = ?, phoneNumber = ?, email = ?, age = ? WHERE idNumber = ?";
+        const char* query = "UPDATE directors SET firstName = ?, lastName = ?, address = ?, phoneNumber = ?, email = ?, age = ? WHERE idNumber = ?";
         int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
@@ -142,6 +142,10 @@ public:
 
         db.executeStatement(stmt);
         // db.commit();
+    }
+
+     void printDirector(){
+        cout<<"Hello Director "<<this->firstName<<" "<<this->lastName<<endl<<"ID Number: "<<this->idNumber<<endl<<"Age: "<<this->age<<endl<<"Address: "<<address<<endl<<"PhoneNumber: "<<this->phoneNumber<<endl<<"email: "<<this->email<<endl<<endl;
     }
 
     // idNumber
@@ -196,6 +200,7 @@ public:
     void setAge(int age) {
         this->age = age;
     }
+
 
 private:
     int idNumber;
