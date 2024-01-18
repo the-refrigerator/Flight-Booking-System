@@ -107,7 +107,7 @@ private:
             ");";
 
         const char* createDirectorsTableQuery =
-            "CREATE TABLE IF NOT EXISTS passengers ("
+            "CREATE TABLE IF NOT EXISTS directors ("
             "    idNumber INTEGER PRIMARY KEY,"
             "    firstName TEXT,"
             "    lastName TEXT,"

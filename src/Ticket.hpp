@@ -11,7 +11,7 @@ using namespace std;
 
 class Ticket : public Model {
 public:
-    static Ticket create(int flightNumber, int passportNumber, string seatNumber, double price) {
+    static Ticket* create(int flightNumber, int passportNumber, string seatNumber, double price) {
         // Execute an INSERT query to add a new ticket to the database
         // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
@@ -34,7 +34,7 @@ public:
         db.executeStatement(stmt);
         db.commit();
 
-        return Ticket(
+        return new Ticket(
                    ticketNumber,
                    flightNumber,
                    passportNumber,
@@ -73,7 +73,7 @@ public:
                     ticketNumber,
                     flightNumber,
                     passportNumber,
-                    reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)),
+                    seatNumber,
                     price
                 )
             );
@@ -110,7 +110,15 @@ public:
             const char* seatNumber = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             double price = sqlite3_column_double(stmt, 4);
 
-            tickets.emplace_back(ticketNumber, flightNumber, passportNumber, seatNumber, price);
+            tickets.push_back(
+                Ticket(
+                    ticketNumber,
+                    flightNumber,
+                    passportNumber,
+                    seatNumber,
+                    price
+                )
+            );
         }
 
         sqlite3_finalize(stmt);
@@ -149,7 +157,6 @@ private:
     string seatNumber;
     double price;
     Ticket (int ticketNumber, int flightNumber, int passportNumber, string seatNumber, double price) {
-        // this->ticketNumber = chrono::system_clock::now().time_since_epoch().count();
         this->ticketNumber = ticketNumber;
         this->flightNumber = flightNumber;
         this->passportNumber = passportNumber;

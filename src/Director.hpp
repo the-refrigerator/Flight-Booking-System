@@ -145,7 +145,7 @@ public:
     }
 
      void printDirector(){
-        cout<<"Hello Director "<<this->firstName<<" "<<this->lastName<<endl<<"ID Number: "<<this->idNumber<<endl<<"Age: "<<this->age<<endl<<"Address: "<<address<<endl<<"PhoneNumber: "<<this->phoneNumber<<endl<<"email: "<<this->email<<endl<<endl;
+        cout<<endl<<endl<<"Hello Director "<<this->firstName<<" "<<this->lastName<<endl<<"ID Number: "<<this->idNumber<<endl<<"Age: "<<this->age<<endl<<"Address: "<<address<<endl<<"PhoneNumber: "<<this->phoneNumber<<endl<<"email: "<<this->email<<endl<<endl;
     }
 
     // idNumber

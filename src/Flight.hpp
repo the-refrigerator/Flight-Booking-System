@@ -13,7 +13,7 @@ using namespace std;
 
 class Flight : public Model {
 public:
-    static Flight create(time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
+    static Flight* create(time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
@@ -35,7 +35,7 @@ public:
         db.executeStatement(stmt);
         db.commit();
 
-        return Flight(
+        return new Flight(
                    flightNumber,
                    departureTime,
                    arrivalTime,
@@ -65,7 +65,16 @@ public:
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
 
-            flights.emplace_back(flightNumber, departureTime, arrivalTime, departureAirport, arrivalAirport, capacity);
+            flights.push_back(
+                Flight(
+                    flightNumber,
+                    departureTime,
+                    arrivalTime,
+                    departureAirport,
+                    arrivalAirport,
+                    capacity
+                )
+            );
         }
 
         sqlite3_finalize(stmt);
@@ -120,10 +129,20 @@ public:
             int flightNumber = sqlite3_column_int(stmt, 0);
             time_t departureTime = static_cast<time_t>(sqlite3_column_int(stmt, 1));
             time_t arrivalTime = static_cast<time_t>(sqlite3_column_int(stmt, 2));
+            const char* departureAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
 
-            flights.emplace_back(flightNumber, departureTime, arrivalTime, departureAirport, arrivalAirport, capacity);
+            flights.push_back(
+                Flight(
+                    flightNumber,
+                    departureTime,
+                    arrivalTime,
+                    departureAirport,
+                    arrivalAirport,
+                    capacity
+                )
+            );
         }
 
         sqlite3_finalize(stmt);
@@ -150,9 +169,19 @@ public:
             time_t departureTime = static_cast<time_t>(sqlite3_column_int(stmt, 1));
             time_t arrivalTime = static_cast<time_t>(sqlite3_column_int(stmt, 2));
             const char* departureAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+            const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
 
-            flights.emplace_back(flightNumber, departureTime, arrivalTime, departureAirport, arrivalAirport, capacity);
+            flights.push_back(
+                Flight(
+                    flightNumber,
+                    departureTime,
+                    arrivalTime,
+                    departureAirport,
+                    arrivalAirport,
+                    capacity
+                )
+            );
         }
 
         sqlite3_finalize(stmt);
@@ -238,13 +267,14 @@ private:
     string departureAirport;
     string arrivalAirport;
     int capacity;
-    Flight(int flightNumber, time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity)
-        : flightNumber(flightNumber),
-          departureTime(departureTime),
-          arrivalTime(arrivalTime),
-          departureAirport(departureAirport),
-          arrivalAirport(arrivalAirport),
-          capacity(capacity) {}
+    Flight(int flightNumber, time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
+        this->flightNumber = flightNumber;
+        this->departureTime = departureTime;
+        this->arrivalTime = arrivalTime;
+        this->departureAirport = departureAirport;
+        this->arrivalAirport = arrivalAirport;
+        this->capacity = capacity;
+    }
 };
 
 #endif // !FLIGHT_H

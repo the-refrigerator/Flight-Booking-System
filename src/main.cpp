@@ -1,56 +1,58 @@
+#include <cstdlib>
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
+#include <cctype>
 
 #include "Passenger.hpp"
 #include "DataBaseConnection.hpp"
-#include<cctype>
 #include "model.hpp"
-// #include "Flight.hpp"
-//this file has errors
-
-// #include "Ticket.hpp"
+#include "Flight.hpp"
+#include "Ticket.hpp"
 #include "Director.hpp"
-#include<algorithm>
+#include "utils.hpp"
 
 using namespace std;
 
-const string password="Airline167";
+const string password = "Airline167";
 
-void PassengerAlgorithm(){
+void PassengerAlgorithm() {
     char ans;
     int choice, number;
     string word;
     // Passenger* p=nullptr;
     Passenger* p = Passenger::create("John", "Doe", "123 Main St", "1234567890", "exmaple@email.com", 21);
-    cout<<"passport number: "<<p->getPassportNumber()<<endl;
 
-    do{
-    cout<<"Have you been on our flights before?(y/n): ";
-    cin>>ans;
-    }while(ans!='n' && ans!='N' && ans!='y' && ans!='Y');
+    do {
+        cout << "Have you been on our flights before?(y/n): ";
+        cin >> ans;
+    } while(ans != 'n' && ans != 'N' && ans != 'y' && ans != 'Y');
 
-    if(ans=='y' || ans=='Y'){
-        cout<<"Choose method of search:\n1. Passport Number\n2. email\n3. Phone Number"<<endl;
-        cin>>choice;
+    if(ans == 'y' || ans == 'Y') {
+        bool  isWord=false;
+        cout << "Choose method of search:\n1. Passport Number\n2. email\n3. Phone Number" << endl;
+        cin >> choice;
 
-        if(choice==1){
-            cout<<"Please enter your passport number: "<<endl;
-            cin>>number;
+        if(choice == 1) {
+            cout << "Please enter your passport number: " << endl;
+            cin >> number;
             p->getPassengerByPassportNumber(number);
-        }
-        else if(choice==2){
-            cout<<"Please enter your email: "<<endl;
-            cin>>word;
+        } else if(choice == 2) {
+
+            do{
+            cout << "Please enter your email: " << endl;
+            getline(cin, word);
+            isWord=Utils::verify_email(word);
+            }while(isWord==false);
+
             // p=getPassengerByEmail(word);
-        }
-        else if(choice==3){
-             cout<<"Please enter your phone number(+### ###...): "<<endl;
-            getline(cin,word);
+        } else if(choice == 3) {
+            cout << "Please enter your phone number(+### ###...): " << endl;
+            getline(cin, word);
             // p=getPassengerByPhoneNumber(word);
         }
 
-        if(p->getFirstName()!="")
+        if(p->getFirstName() != "")
             p->printPassanger();
 
     }
@@ -58,74 +60,81 @@ void PassengerAlgorithm(){
 
 }
 
-void DirectorAlgorithm(){
+void DirectorAlgorithm() {
     string pass;
 
-    cout<<"Enter password to verify your identity: ";
-    cin>>pass;
+    cout << "Enter password to verify your identity: ";
+    cin >> pass;
 
-    if(pass==password){
+    if(pass == password) {
         char status;
-        string Lname, Fname, Address, Number, Email;
+        string Fname, Lname, Address, Number, Email;
         int Age;
+        bool isEmail=false;
 
-        do{
-        cout<<"Are you new or old? (n/o) ";
-        cin>>status;
-        }while(status!='n' && status!='N' && status!='o' && status!='O');
-        
+        do {
+            cout << "Are you new or old? (n/o) ";
+            cin >> status;
+        } while(toupper(status) != 'N' && toupper(status) != 'O');
 
-        if(status=='N' || status=='n'){
-            cout<<"Please fill the following:\nName: ";
-            cin.clear();
 
-            getline(cin,Fname);
+        if(status == 'N' || status == 'n') {
+            cout << "Please fill the following:" << endl;
 
-            cout<<"Last name: ";
-            getline(cin,Lname);
+            getline(cin, Fname);
+            cout << "Name: ";
+            getline(cin, Fname);
 
-            cout<<"Address: ";
-            getline(cin,Address);
+            cout << "Last name: ";
+            getline(cin, Lname);
 
-            cout<<"Age: ";
-            cin>>Age;
+            cout << "Address: ";
+            getline(cin, Address);
 
-            cout<<"Phone Number: ";
+            cout << "Age: ";
+            cin >> Age;
+
+            getline(cin, Number);
+            cout << "Phone Number: ";
             getline(cin, Number);
 
-            cout<<"Email: ";
+            do{
+            cout << "Email: ";
             getline(cin, Email);
+            isEmail=Utils::verify_email(Email);
+            }while(isEmail==false);
 
-            Director* d=Director::create(Fname, Lname, Address, Number, Email, Age);
+            Director* d = Director::create(Fname, Lname, Address, Number, Email, Age);
             d->printDirector();
         }
-    }
-    else
-        cout<<"Wrong password!";
-        
+    } else
+        cout << "Wrong password!";
+
 }
 
 int main() {
+    string input;
+    char person = 'k';
 
-    int input;
-    char person='k';
+    do {
+        cin.clear();
+        cout << "enter 0000 to exit: ";
+        getline(cin, input);
+    } while (!cin);
 
+    if (input == "0000")
+        exit(0);
 
-    cout<<"enter 0000 to exit: "; /*idk how to terminate the program upon 0000*/
-    cin>>input;
+    do {
+        cout << "Are you a passenger or a director? (p/d) ";
+        cin >> person;
+    } while(person != 'p' && person != 'P' && person != 'd' && person != 'D');
 
-    // while(input!=0000){
-
-        do{
-        cout<<"Are you a passenger or a director? (p/d) ";
-        cin>>person;
-        }while(person!='p' && person!= 'P' && person!='d' && person!='D');
-
-    if (person=='p' || person=='P')
+    if (person == 'p' || person == 'P')
         PassengerAlgorithm();
-    else if (person=='d' || person=='D')
+    else if (person == 'd' || person == 'D')
         DirectorAlgorithm();
-    
+
     // Passenger* p = Passenger::create("John", "Doe", "123 Main St", "1234567890", "exmaple@email.com", 21);
 
     // cout << p->getPassportNumber() << endl;
