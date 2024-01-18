@@ -106,6 +106,18 @@ private:
             "    FOREIGN KEY (passportNumber) REFERENCES passengers(passportNumber)"
             ");";
 
+        const char* createDirectorsTableQuery =
+            "CREATE TABLE IF NOT EXISTS passengers ("
+            "    idNumber INTEGER PRIMARY KEY,"
+            "    firstName TEXT,"
+            "    lastName TEXT,"
+            "    address TEXT,"
+            "    phoneNumber TEXT,"
+            "    email TEXT,"
+            "    age INTEGER"
+            ");";
+
+
         sqlite3_stmt* stmt;
 
         int rc = sqlite3_prepare_v2(getDB(), createFlightsTableQuery, -1, &stmt, 0);
@@ -130,6 +142,16 @@ private:
 
         if (rc != SQLITE_OK) {
             std::cerr << "Cannot prepare statement (" << createTicketsTableQuery << "): " << sqlite3_errmsg(getDB()) << std::endl;
+            return;
+        }
+
+        executeStatement(stmt);
+
+
+        rc = sqlite3_prepare_v2(getDB(), createDirectorsTableQuery, -1, &stmt, 0);
+
+        if (rc != SQLITE_OK) {
+            std::cerr << "Cannot prepare statement (" << createDirectorsTableQuery << "): " << sqlite3_errmsg(getDB()) << std::endl;
             return;
         }
 

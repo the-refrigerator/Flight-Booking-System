@@ -29,6 +29,16 @@ CREATE TABLE tickets (
     FOREIGN KEY (passportNumber) REFERENCES passengers(passportNumber)
 );
 
+CREATE TABLE directors (
+    idNumber INTEGER PRIMARY KEY,
+    firstName TEXT,
+    lastName TEXT,
+    address TEXT,
+    phoneNumber TEXT,
+    email TEXT,
+    age INTEGER
+);
+
 --Create Data
 INSERT INTO flights (flightNumber, departureTime, arrivalTime, departureAirport, arrivalAirport, capacity)
 VALUES (
@@ -60,6 +70,16 @@ VALUES (
     100.00
 );
 
+INSERT INTO directors (idNumber, firstName, lastName, address, phoneNumber, email, age)
+VALUES (
+    123456789,
+    'admin',
+    'admin',
+    '123 Main St',
+    '123-456-7890',
+    'example@email.com',
+    30
+);
 --Read Data
 SELECT * FROM flights;
 SELECT * FROM flights WHERE flightNumber = 1;
@@ -72,6 +92,10 @@ SELECT * FROM tickets;
 SELECT * FROM tickets WHERE ticketNumber = 1;
 SELECT * FROM tickets WHERE flightNumber = 1;
 SELECT * FROM tickets WHERE passportNumber = 123456789;
+
+SELECT * FROM directors;
+SELECT * FROM directors WHERE idNumber = 123456789;
+SELECT * FROM directors WHERE firstName = 'admin';
 
 --Update Data
 UPDATE flights
@@ -104,6 +128,18 @@ SET
 WHERE
     ticketNumber = 1;
 
+
+UPDATE directors
+SET
+    firstName = 'admin',
+    lastName = 'admin',
+    address = '123 Main St',
+    phoneNumber = '123-456-7890',
+    email = 'example@email.com',
+    age = 21
+WHERE
+    passportNumber = 123456789;
+    
 --Delete Data
 DELETE FROM flights
 WHERE
@@ -117,3 +153,6 @@ DELETE FROM tickets
 WHERE
     ticketNumber = 1;
 
+DELETE FROM directors
+WHERE
+    idNumber = 123456789;

@@ -1,5 +1,5 @@
-#ifndef PASSENGER_H
-#define PASSENGER_H
+#ifndef DIRECTOR_H
+#define DIRECTOR_H
 
 #include <sqlite3.h>
 #include <chrono>
@@ -10,23 +10,23 @@
 
 using namespace std;
 
-class Passenger : public Model {
+class Director : public Model {
 public:
-    static Passenger* create(string firstName, string lastName, string address, string phoneNumber, string email, int age) {
-        // Execute an INSERT query to add a new passenger to the database
+    static Director* create(string firstName, string lastName, string address, string phoneNumber, string email, int age) {
+        // Execute an INSERT query to add a new Director to the database
         // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "INSERT INTO passengers (passportNumber, firstName, lastName, address, phoneNumber, email, age) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        const char* query = "INSERT INTO Directors (idNumber, firstName, lastName, address, phoneNumber, email, age) VALUES (?, ?, ?, ?, ?, ?, ?)";
         long rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
             throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-        long passportNumber = abs(chrono::system_clock::now().time_since_epoch().count());
+        long idNumber = abs(chrono::system_clock::now().time_since_epoch().count());
 
-        sqlite3_bind_int(stmt, 1, passportNumber);
+        sqlite3_bind_int(stmt, 1, idNumber);
         sqlite3_bind_text(stmt, 2, firstName.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 3, lastName.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 4, address.c_str(), -1, SQLITE_STATIC);
@@ -37,8 +37,8 @@ public:
         db.executeStatement(stmt);
         // db.commit();
 
-        return new Passenger(
-                   passportNumber,
+        return new Director(
+                   idNumber,
                    firstName,
                    lastName,
                    address,
@@ -48,22 +48,22 @@ public:
                );
     }
 
-    static vector<Passenger> getAllPassengers() {
-        vector<Passenger> passengers;
+    static vector<Director> getAllDirectors() {
+        vector<Director> Directors;
 
-        // Execute a SELECT query to fetch all passengers from the database
+        // Execute a SELECT query to fetch all Directors from the database
         // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "SELECT * FROM passengers";
+        const char* query = "SELECT * FROM Directors";
         int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
             throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
         while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-            int passportNumber = sqlite3_column_int(stmt, 0);
+            int idNumber = sqlite3_column_int(stmt, 0);
             const char* firstName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
             const char* lastName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* address = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
@@ -71,9 +71,9 @@ public:
             const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
             int age = sqlite3_column_int(stmt, 6);
 
-            passengers.push_back(
-                Passenger(
-                    passportNumber,
+            Directors.push_back(
+                Director(
+                    idNumber,
                     firstName,
                     lastName,
                     address,
@@ -86,23 +86,23 @@ public:
 
         sqlite3_finalize(stmt);
 
-        return passengers;
+        return Directors;
     }
 
-    static Passenger getPassengerByPassportNumber(int passportNumber) {
+    static Director getDirectorByidNumebr(int idNumber) {
 
-        // Execute a SELECT query to fetch a specific passenger from the database
+        // Execute a SELECT query to fetch a specific Director from the database
         // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "SELECT * FROM passengers WHERE passportNumber = ?";
+        const char* query = "SELECT * FROM Directors WHERE idNumber = ?";
         int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
             throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-        sqlite3_bind_int(stmt, 1, passportNumber);
+        sqlite3_bind_int(stmt, 1, idNumber);
 
         if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
             const char* firstName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
@@ -112,25 +112,21 @@ public:
             const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
             int age = sqlite3_column_int(stmt, 6);
 
-            Passenger passenger = Passenger(passportNumber, firstName, lastName, address, phoneNumber, email, age);
+            Director director = Director(idNumber, firstName, lastName, address, phoneNumber, email, age);
             sqlite3_finalize(stmt);
 
-            return passenger;
+            return director;
         } else
-            return Passenger(0, "", "", "", "", "", 0);
-    }
-
-    void printPassanger(){
-        cout<<"Passanger "<<this->firstName<<" "<<this->lastName<<endl<<"Passport Number: "<<this->passportNumber<<endl<<"Age: "<<this->age<<endl<<"Address: "<<address<<endl<<"PhoneNumber: "<<this->phoneNumber<<endl<<"email: "<<this->email<<endl<<endl;
+            return Director(0, "", "", "", "", "", 0);
     }
 
     void save() override {
-        // Execute an UPDATE query to modify the passenger information in the database
+        // Execute an UPDATE query to modify the Director information in the database
         // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
-        const char* query = "UPDATE passengers SET firstName = ?, lastName = ?, address = ?, phoneNumber = ?, email = ?, age = ? WHERE passportNumber = ?";
+        const char* query = "UPDATE Directors SET firstName = ?, lastName = ?, address = ?, phoneNumber = ?, email = ?, age = ? WHERE idNumber = ?";
         int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
         if (rc != SQLITE_OK)
@@ -142,15 +138,15 @@ public:
         sqlite3_bind_text(stmt, 4, phoneNumber.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 5, email.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_int(stmt, 6, age);
-        sqlite3_bind_int(stmt, 7, passportNumber);
+        sqlite3_bind_int(stmt, 7, idNumber);
 
         db.executeStatement(stmt);
         // db.commit();
     }
 
-    // passportNumber
-    int getPassportNumber() {
-        return passportNumber;
+    // idNumber
+    int getIdNumber() {
+        return idNumber;
     }
 
     // firstName
@@ -202,7 +198,7 @@ public:
     }
 
 private:
-    int passportNumber;
+    int idNumber;
     string firstName;
     string lastName;
     string address;
@@ -210,8 +206,8 @@ private:
     string email;
     int age;
 
-    Passenger (int passportNumber, string firstName, string lastName, string address, string phoneNumber, string email, int age) {
-        this->passportNumber = passportNumber;
+    Director (int idNumber, string firstName, string lastName, string address, string phoneNumber, string email, int age) {
+        this->idNumber = idNumber;
         this->firstName = firstName;
         this->lastName = lastName;
         this->address = address;
@@ -222,4 +218,4 @@ private:
 
 };
 
-#endif // !PASSENGER_H
+#endif // !DIRECTOR_H
