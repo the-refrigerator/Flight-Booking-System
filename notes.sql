@@ -15,7 +15,7 @@ CREATE TABLE passengers (
     lastName TEXT,
     address TEXT,
     phoneNumber TEXT,
-    email TEXT,
+    email TEXT UNIQUE,
     age INTEGER
 );
 

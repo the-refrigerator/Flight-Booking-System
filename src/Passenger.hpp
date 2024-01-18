@@ -89,7 +89,7 @@ public:
         return passengers;
     }
 
-    static Passenger getPassengerByPassportNumber(int passportNumber) {
+    static Passenger* getPassengerByPassportNumber(int passportNumber) {
 
         // Execute a SELECT query to fetch a specific passenger from the database
         // Use the database connection from DataBaseConnection singleton
@@ -112,12 +112,12 @@ public:
             const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
             int age = sqlite3_column_int(stmt, 6);
 
-            Passenger passenger = Passenger(passportNumber, firstName, lastName, address, phoneNumber, email, age);
+            Passenger* passenger = new Passenger(passportNumber, firstName, lastName, address, phoneNumber, email, age);
             sqlite3_finalize(stmt);
 
             return passenger;
         } else
-            return Passenger(0, "", "", "", "", "", 0);
+            return new Passenger(0, "", "", "", "", "", 0);
     }
 
     void printPassanger(){
