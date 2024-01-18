@@ -48,6 +48,10 @@ public:
                );
     }
 
+    //idk why the constructor is private but im not changing it and i need this so here
+    static Passenger* constr(){
+        return new Passenger(0, "", "", "", "", "", 0);
+    }
     static vector<Passenger> getAllPassengers() {
         vector<Passenger> passengers;
 

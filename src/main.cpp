@@ -21,7 +21,8 @@ void PassengerAlgorithm() {
     int choice, number;
     string word;
     // Passenger* p=nullptr;
-    Passenger* p = Passenger::create("John", "Doe", "123 Main St", "1234567890", "exmaple@email.com", 21);
+    Passenger* p = Passenger::constr();
+    // Passenger* p2 = Passenger::create("Jon", "Snow", "The north", "945", "iknownth@jonsnow.dragons", 25);
 
     do {
         cout << "Have you been on our flights before?(y/n): ";
@@ -40,21 +41,26 @@ void PassengerAlgorithm() {
         } else if(choice == 2) {
 
             do{
+                            getline(cin, word);
+
             cout << "Please enter your email: " << endl;
             getline(cin, word);
             isWord=Utils::verify_email(word);
             }while(isWord==false);
 
-            // p=getPassengerByEmail(word);
+            p->getPassengerByEmail(word);
+
         } else if(choice == 3) {
+                        getline(cin, word);
             cout << "Please enter your phone number(+### ###...): " << endl;
             getline(cin, word);
-            // p=getPassengerByPhoneNumber(word);
+            p->getPassengerByPhoneNumber(word);
         }
 
         if(p->getFirstName() != "")
             p->printPassanger();
-
+        else
+            cout<<"User not found!"<<endl;
     }
 
 
@@ -107,6 +113,9 @@ void DirectorAlgorithm() {
             Director* d = Director::create(Fname, Lname, Address, Number, Email, Age);
             d->printDirector();
         }
+
+        cout<<"List of flights: "<<endl<<endl;
+        cout<<"Flight Number\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tCapacity"<<endl;
     } else
         cout << "Wrong password!";
 
