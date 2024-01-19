@@ -48,10 +48,6 @@ public:
                );
     }
 
-    //idk why the constructor is private but im not changing it and i need this so here
-    static Passenger* constr(){
-        return new Passenger(0, "", "", "", "", "", 0);
-    }
     static vector<Passenger> getAllPassengers() {
         vector<Passenger> passengers;
 
@@ -88,15 +84,10 @@ public:
             );
         }
 
-        sqlite3_finalize(stmt);
-
         return passengers;
     }
 
     static Passenger* getPassengerByPassportNumber(int passportNumber) {
-
-        // Execute a SELECT query to fetch a specific passenger from the database
-        // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
@@ -108,9 +99,8 @@ public:
 
         sqlite3_bind_int(stmt, 1, passportNumber);
 
-        db.executeStatement(stmt);
-
         if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+            int passportNumber = sqlite3_column_int(stmt, 0);
             const char* firstName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
             const char* lastName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* address = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
@@ -118,18 +108,21 @@ public:
             const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
             int age = sqlite3_column_int(stmt, 6);
 
-            Passenger* passenger = new Passenger(passportNumber, firstName, lastName, address, phoneNumber, email, age);
-            sqlite3_finalize(stmt);
 
-            return passenger;
+            return new Passenger(
+                       passportNumber,
+                       firstName,
+                       lastName,
+                       address,
+                       phoneNumber,
+                       email,
+                       age
+                   );
         } else
             return new Passenger(0, "", "", "", "", "", 0);
     }
 
     static Passenger* getPassengerByEmail(string email) {
-
-        // Execute a SELECT query to fetch a specific passenger from the database
-        // Use the database connection from DataBaseConnection singleton
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
@@ -141,28 +134,29 @@ public:
 
         sqlite3_bind_text(stmt, 1, email.c_str(), -1, SQLITE_STATIC);
 
-        db.executeStatement(stmt);
-
         if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-            const int passportNumber= sqlite3_column_int(stmt, 0);
+            int passportNumber = sqlite3_column_int(stmt, 0);
             const char* firstName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
             const char* lastName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* address = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             const char* phoneNumber = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+            const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
             int age = sqlite3_column_int(stmt, 6);
 
-            Passenger* passenger = new Passenger(passportNumber, firstName, lastName, address, phoneNumber, email, age);
-            sqlite3_finalize(stmt);
-
-            return passenger;
+            return new Passenger(
+                       passportNumber,
+                       firstName,
+                       lastName,
+                       address,
+                       phoneNumber,
+                       email,
+                       age
+                   );
         } else
             return new Passenger(0, "", "", "", "", "", 0);
     }
 
-    static Passenger* getPassengerByPhoneNumber(string phoneNumber) {
-
-        // Execute a SELECT query to fetch a specific passenger from the database
-        // Use the database connection from DataBaseConnection singleton
+    static Passenger* getPassengerByPhoneNumber(string Number) {
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
@@ -172,28 +166,31 @@ public:
         if (rc != SQLITE_OK)
             throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-        sqlite3_bind_text(stmt, 1, phoneNumber.c_str(), -1, SQLITE_STATIC);
-
-        db.executeStatement(stmt);
+        sqlite3_bind_text(stmt, 1, Number.c_str(), -1, SQLITE_STATIC);
 
         if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-            const int passportNumber= sqlite3_column_int(stmt, 0);
+            int passportNumber = sqlite3_column_int(stmt, 0);
             const char* firstName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
             const char* lastName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* address = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+            const char* phoneNumber = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
             int age = sqlite3_column_int(stmt, 6);
 
-            Passenger* passenger = new Passenger(passportNumber, firstName, lastName, address, phoneNumber, email, age);
-            sqlite3_finalize(stmt);
-
-            return passenger;
+            return new Passenger(
+                       passportNumber,
+                       firstName,
+                       lastName,
+                       address,
+                       phoneNumber,
+                       email,
+                       age
+                   );
         } else
             return new Passenger(0, "", "", "", "", "", 0);
     }
-
-    void printPassanger(){
-        cout<<endl<<endl<<"Passanger "<<this->firstName<<" "<<this->lastName<<endl<<"Passport Number: "<<this->passportNumber<<endl<<"Age: "<<this->age<<endl<<"Address: "<<address<<endl<<"PhoneNumber: "<<this->phoneNumber<<endl<<"email: "<<this->email<<endl<<endl;
+    void printPassanger() {
+        cout << endl << endl << "Passanger " << this->firstName << " " << this->lastName << endl << "Passport Number: " << this->passportNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
     }
 
     void save() override {

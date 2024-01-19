@@ -19,8 +19,10 @@ public:
     void executeStatement (sqlite3_stmt* stmt) {
         int rc = sqlite3_exec(this->db, "BEGIN TRANSACTION", 0, 0, 0);
 
-        if (rc != SQLITE_OK)
+        if (rc != SQLITE_OK) {
             std::cerr << "Cannot begin transaction: " << sqlite3_errmsg(db) << std::endl;
+            return;
+        }
 
         rc = sqlite3_step(stmt);
 
@@ -90,8 +92,8 @@ private:
             "    firstName TEXT,"
             "    lastName TEXT,"
             "    address TEXT,"
-            "    phoneNumber TEXT,"
-            "    email TEXT,"
+            "    phoneNumber TEXT UNIQUE,"
+            "    email TEXT UNIQUE,"
             "    age INTEGER"
             ");";
 
