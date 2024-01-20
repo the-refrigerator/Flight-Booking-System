@@ -7,6 +7,7 @@
 #include <vector>
 #include "model.hpp"
 #include <math.h>
+#include "utils.hpp"
 
 using namespace std;
 
@@ -47,6 +48,42 @@ public:
                    age
                );
     }
+
+    static Passenger* AddPassenger(){
+        cout<<"Please enter the following:"<<endl;
+        string Fname, Lname, Address, Number, Email;
+        int Age;
+        bool isEmail = false;
+
+        getline(cin, Fname);
+            cout << "Name: ";
+            getline(cin, Fname);
+
+            cout << "Last name: ";
+            getline(cin, Lname);
+
+            cout << "Address: ";
+            getline(cin, Address);
+
+            cout << "Age: ";
+            cin >> Age;
+
+            getline(cin, Number);
+            cout << "Phone Number: ";
+            getline(cin, Number);
+
+            do {
+                cout << "Email: ";
+                getline(cin, Email);
+                isEmail = Utils::verify_email(Email);
+            } while(isEmail == false);
+
+            Passenger* p = Passenger::create(Fname, Lname, Address, Number, Email, Age);
+            p->printPassenger();
+            return p;
+    }
+
+    
 
     static vector<Passenger> getAllPassengers() {
         vector<Passenger> passengers;
@@ -189,8 +226,8 @@ public:
         } else
             return new Passenger(0, "", "", "", "", "", 0);
     }
-    void printPassanger() {
-        cout << endl << endl << "Passanger " << this->firstName << " " << this->lastName << endl << "Passport Number: " << this->passportNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
+    void printPassenger() {
+        cout << endl << endl << "Hello Passenger " << this->firstName << " " << this->lastName << endl << "Passport Number: " << this->passportNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
     }
 
     void save() override {

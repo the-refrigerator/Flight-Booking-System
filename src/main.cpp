@@ -60,58 +60,26 @@ void PassengerAlgorithm() {
         }
 
         if(p->getFirstName() != "")
-            p->printPassanger();
+            p->printPassenger();
         else
             cout << "User not found!" << endl;
     }
     else{
-        cout<<"Adding a new user:"<<endl<<"Please enter the following:"<<endl;
-        string Fname, Lname, Address, Number, Email;
-        int Age;
-        bool isEmail = false;
-
-        getline(cin, Fname);
-            cout << "Name: ";
-            getline(cin, Fname);
-
-            cout << "Last name: ";
-            getline(cin, Lname);
-
-            cout << "Address: ";
-            getline(cin, Address);
-
-            cout << "Age: ";
-            cin >> Age;
-
-            getline(cin, Number);
-            cout << "Phone Number: ";
-            getline(cin, Number);
-
-            do {
-                cout << "Email: ";
-                getline(cin, Email);
-                isEmail = Utils::verify_email(Email);
-            } while(isEmail == false);
-
-            Passenger* p = Passenger::create(Fname, Lname, Address, Number, Email, Age);
-            p->printPassanger();
+        cout<<"Adding a new user:"<<endl;
+        p=Passenger::AddPassenger();
     }
-
 }
 
 
 
 void DirectorAlgorithm() {
     string pass;
-    char ans;
+    int ans;
     cout << "Enter password to verify your identity: ";
     cin >> pass;
 
     if(pass == password) {
         char status;
-        string Fname, Lname, Address, Number, Email;
-        int Age;
-        bool isEmail = false;
 
         do {
             cout << "Are you new or old? (n/o) ";
@@ -120,91 +88,25 @@ void DirectorAlgorithm() {
 
 
         if(toupper(status) == 'N') {
-            cout << "Please fill the following:" << endl;
-
-            getline(cin, Fname);
-            cout << "Name: ";
-            getline(cin, Fname);
-
-            cout << "Last name: ";
-            getline(cin, Lname);
-
-            cout << "Address: ";
-            getline(cin, Address);
-
-            cout << "Age: ";
-            cin >> Age;
-
-            getline(cin, Number);
-            cout << "Phone Number: ";
-            getline(cin, Number);
-
-            do {
-                cout << "Email: ";
-                getline(cin, Email);
-                isEmail = Utils::verify_email(Email);
-            } while(isEmail == false);
-
-            Director* d = Director::create(Fname, Lname, Address, Number, Email, Age);
-            d->printDirector();
+            Director* d= Director::AddDirector();
         }
 
         Flight::PrintFlights();
 
-        do{
-        cout<<endl<<"Would you like to add a flight? (y/n): ";
+        try{
+        cout<<endl<<"Would would you like to do?"<<endl<<"1. Add a Flight"<<endl<<"2.Remove a Flight"<<endl<<"3.Remove Passenger"<<endll;
         cin>>ans;
-        }while(toupper(ans)!='Y' && toupper(ans)!='N'); 
+
+        if(ans!=1 && ans!=2 && ans!=3)
+            throw "Invalid Choice";
+        } 
+
+        catch(const* char s){
+            cout<<s;
+        }
 
         if(toupper(ans)=='Y'){
-            string arrA, deptA, arrT, depT;
-            time_t t_arrT, t_depT, t_additional;
-            tm timeInfo={};
-            int cap;
-
-            cout<<"Enter the following: "<<endl;
-
-            cout<<"Departure Airport: ";
-            cin>>deptA;
-
-            cout<<"Arrival Airport: ";
-            cin>>arrA;
-
-            cout<<"Capacity: ";
-            cin>>cap;
-
-            cout<<"Departure Time: ";
-            cin>>depT;
-            istringstream s1(depT);
-            s1>>get_time(&timeInfo, "%I:%M %p");
-            t_depT=mktime(&timeInfo);
-            cout<<"departure time: "<<t_depT<<endl;
-
-            try{
-                cin>>arrT;
-            cout<<"Arrival Time: ";
-            cin>>arrT;
-
-            istringstream s2(arrT);
-            s2>>get_time(&timeInfo, "%I:%M %p");
-            t_arrT=mktime(&timeInfo);
-            cout<<"arrival time: "<<t_arrT<<endl;
-            
-
-            istringstream s3("00:59");
-            s3>>get_time(&timeInfo, "%I:%M");
-            t_additional=mktime(&timeInfo);
-            cout<<"additional: "<<t_additional<<endl;
-
-            if(abs(t_arrT)< abs(t_depT)+ abs(t_additional))
-                throw("impossible flight");
-            }
-
-            
-            catch(const char* s){
-                cout<<s<<endl;
-            }
-            Flight::create(t_depT, t_arrT, deptA, arrA, cap);
+           Director::AddFlight();
 
         }
     } else

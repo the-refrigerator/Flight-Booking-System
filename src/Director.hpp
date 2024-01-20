@@ -7,6 +7,7 @@
 #include <vector>
 #include "model.hpp"
 #include <math.h>
+#include "utils.hpp"
 
 using namespace std;
 
@@ -48,6 +49,93 @@ public:
                );
     }
 
+    static Director* AddDirector(){
+            string Fname, Lname, Address, Number, Email;
+            int Age;
+                    bool isEmail = false;
+
+
+        cout << "Please fill the following:" << endl;
+
+            getline(cin, Fname);
+            cout << "Name: ";
+            getline(cin, Fname);
+
+            cout << "Last name: ";
+            getline(cin, Lname);
+
+            cout << "Address: ";
+            getline(cin, Address);
+
+            cout << "Age: ";
+            cin >> Age;
+
+            getline(cin, Number);
+            cout << "Phone Number: ";
+            getline(cin, Number);
+
+            do {
+                cout << "Email: ";
+                getline(cin, Email);
+                isEmail = Utils::verify_email(Email);
+            } while(isEmail == false);
+
+
+            Director* d = Director::create(Fname, Lname, Address, Number, Email, Age);
+            d->printDirector();
+            return d;
+    }
+
+        static void AddFlight(){
+             string arrA, deptA, arrT, depT;
+            time_t t_arrT, t_depT, t_additional;
+            tm timeInfo={};
+            int cap;
+
+            cout<<"Enter the following: "<<endl;
+
+            cout<<"Departure Airport: ";
+            cin>>deptA;
+
+            cout<<"Arrival Airport: ";
+            cin>>arrA;
+
+            cout<<"Capacity: ";
+            cin>>cap;
+
+            cout<<"Departure Time: ";
+            cin>>depT;
+            istringstream s1(depT);
+            s1>>get_time(&timeInfo, "%I:%M %p");
+            t_depT=mktime(&timeInfo);
+            cout<<"departure time: "<<t_depT<<endl;
+
+            try{
+                cin>>arrT;
+            cout<<"Arrival Time: ";
+            cin>>arrT;
+
+            istringstream s2(arrT);
+            s2>>get_time(&timeInfo, "%I:%M %p");
+            t_arrT=mktime(&timeInfo);
+            cout<<"arrival time: "<<t_arrT<<endl;
+            
+
+            istringstream s3("00:59");
+            s3>>get_time(&timeInfo, "%I:%M");
+            t_additional=mktime(&timeInfo);
+            cout<<"additional: "<<t_additional<<endl;
+
+            if(abs(t_arrT)< abs(t_depT)+ abs(t_additional))
+                throw("impossible flight");
+            }
+
+            
+            catch(const char* s){
+                cout<<s<<endl;
+            }
+            Flight::create(t_depT, t_arrT, deptA, arrA, cap);
+        }
     static vector<Director> getAllDirectors() {
         vector<Director> Directors;
 
