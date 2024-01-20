@@ -65,6 +65,9 @@ public:
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
 
+            
+            //if the number of tickets<capacity
+            // if (COUNT<=capacity)
             flights.push_back(
                 Flight(
                     flightNumber,
@@ -172,6 +175,10 @@ public:
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
 
+            // SELECT COUNT(*) AS row_count
+            // FROM flights;
+            //if the number of tickets<capacity
+            // if (COUNT<=capacity)
             flights.push_back(
                 Flight(
                     flightNumber,
@@ -189,6 +196,13 @@ public:
         return flights;
     }
 
+    static void PrintFlights(){
+        vector<Flight> availableFlights=getAllFlights();
+
+        cout<<"List of flights: " << endl<<"Flight\t\tDeparture Airport\tDeparture Time\tArrival Time\tArrival Airport"<<endl;
+        for(int i=0; i<static_cast<int>(availableFlights.size()); i++)
+            cout<<availableFlights[i].flightNumber<<"\t"<<availableFlights[i].departureAirport<<"\t\t\t"<<availableFlights[i].departureTime<<"\t"<<availableFlights[i].arrivalAirport<<"\t\t"<<availableFlights[i].arrivalTime<<endl;
+    }
     // flightNumber
     int getFlightNumber() {
         return flightNumber;
