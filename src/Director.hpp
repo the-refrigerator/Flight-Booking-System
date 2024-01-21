@@ -133,9 +133,19 @@ public:
             
             catch(const char* s){
                 cout<<s<<endl;
+                exit(0);
             }
             Flight::create(t_depT, t_arrT, deptA, arrA, cap);
         }
+
+    static void RemoveFlight(){
+        Flight::PrintFlights();
+    }
+
+    static void RemovePassenger(){
+        Passenger::printAllPassengers();
+    }
+
     static vector<Director> getAllDirectors() {
         vector<Director> Directors;
 

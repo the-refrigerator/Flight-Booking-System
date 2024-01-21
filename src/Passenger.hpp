@@ -6,8 +6,9 @@
 #include <string>
 #include <vector>
 #include "model.hpp"
-#include <math.h>
+#include <cmath>
 #include "utils.hpp"
+#include "Flight.hpp"
 
 using namespace std;
 
@@ -84,7 +85,42 @@ public:
     }
 
     
+    void AddTicket(){
 
+        if(flightNumber==0){
+        vector<Flight> availableFlights=Flight::getAllFlights();
+        Flight::PrintFlights();
+        Flight* f=nullptr;
+
+        int choice;
+
+        do{
+        cout<<"Choose a Flight to book: ";
+        cin>>choice;
+        }while(choice>static_cast<int>(availableFlights.size()));
+        
+        f=&availableFlights[choice-1];
+
+        try{
+            if(f->getNumberOfTickets()!=f->getCapacity()){
+                this->flightNumber=f->getFlightNumber();
+                f->incrementTickets();
+            }
+            else
+                throw "Flight full!";
+        }
+        
+        catch(const char* s){
+            cout<<s;
+            exit(0);
+        }
+
+       
+    } else{
+            cout<<"You're already booked to flight "<<flightNumber<<endl;
+            exit(0);
+        }
+    }
     static vector<Passenger> getAllPassengers() {
         vector<Passenger> passengers;
 
@@ -122,6 +158,14 @@ public:
         }
 
         return passengers;
+    }
+
+    static void printAllPassengers(){
+        vector<Passenger> passengers=getAllPassengers();
+
+        cout<<endl<<"List of Passengers in the Airline: "<<endl<<"Passenger\tPassport Number\t\tName\t\tLast Name\t\tAddress\t\t\tEmail\t\t\t\tPhone Number\t\tAge"<<endl;
+        for(int i=0; i<static_cast<int>(passengers.size()); i++)
+            cout<<i+1<<"\t\t"<<passengers[i].passportNumber<<"\t\t"<<passengers[i].firstName<<"\t\t"<<passengers[i].lastName<<"\t\t\t"<<passengers[i].address<<"\t\t\t"<<passengers[i].email<<"\t\t"<<passengers[i].phoneNumber<<"\t\t"<<passengers[i].age<<endl;
     }
 
     static Passenger* getPassengerByPassportNumber(int passportNumber) {
@@ -315,6 +359,7 @@ private:
     string phoneNumber;
     string email;
     int age;
+    int flightNumber=0;
 
     Passenger (int passportNumber, string firstName, string lastName, string address, string phoneNumber, string email, int age) {
         this->passportNumber = passportNumber;

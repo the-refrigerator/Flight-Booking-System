@@ -199,9 +199,9 @@ public:
     static void PrintFlights(){
         vector<Flight> availableFlights=getAllFlights();
 
-        cout<<"List of flights: " << endl<<"Flight\t\tDeparture Airport\tDeparture Time\tArrival Time\tArrival Airport"<<endl;
+        cout<<"List of flights: " << endl<<"Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets"<<endl;
         for(int i=0; i<static_cast<int>(availableFlights.size()); i++)
-            cout<<availableFlights[i].flightNumber<<"\t"<<availableFlights[i].departureAirport<<"\t\t\t"<<availableFlights[i].departureTime<<"\t"<<availableFlights[i].arrivalAirport<<"\t\t"<<availableFlights[i].arrivalTime<<endl;
+            cout<<i+1<<"\t"<<availableFlights[i].flightNumber<<"\t\t"<<availableFlights[i].departureAirport<<"\t\t\t"<<availableFlights[i].departureTime<<"\t"<<availableFlights[i].arrivalAirport<<"\t\t"<<availableFlights[i].arrivalTime<<"\t"<<availableFlights[i].capacity - availableFlights[i].numberOFTickets<<endl;
     }
     // flightNumber
     int getFlightNumber() {
@@ -245,6 +245,15 @@ public:
         return capacity;
     }
 
+    //Number of Tickets
+    int getNumberOfTickets(){
+        return numberOFTickets;
+    }
+
+    void incrementTickets(){
+        numberOFTickets++;
+    }
+
     // Save to database
     void save() override {
         DataBaseConnection& db = DataBaseConnection::getInstance();
@@ -281,6 +290,8 @@ private:
     string departureAirport;
     string arrivalAirport;
     int capacity;
+    int numberOFTickets;
+
     Flight(int flightNumber, time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
         this->flightNumber = flightNumber;
         this->departureTime = departureTime;
