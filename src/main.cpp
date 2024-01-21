@@ -78,13 +78,19 @@ void PassengerAlgorithm() {
         cin >> choice;
     } while(choice != 1 && choice != 2 && choice != 3);
 
-    if(choice == 1)
-        p->AddTicket();
 
-    // else if(choice==2)
-    //         // p->DeleteTicket();
-    //     else
-    //FindFlight;
+    switch(choice) {
+        case 1:
+            p->AddTicket();
+            break;
+
+        case 2:
+            p->DeleteTicket();
+            break;
+
+        default:
+            Flight::FindTicket();
+    }
 
 }
 

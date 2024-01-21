@@ -144,10 +144,35 @@ public:
 
     static void RemoveFlight() {
         Flight::PrintFlights();
-    }
+        vector<Flight> flights = Flight::getAllFlights();
+
+        int choice;
+
+        do{
+            cout<<"Select a flight to remove: ";
+            cin >> choice;
+        } while(choice < 0 || choice > static_cast<int>flights.size());
+        
+        Flight* f=flights[choice-1];
+        f->remove();
+        delete() f;
+        }
 
     static void RemovePassenger() {
         Passenger::printAllPassengers();
+
+        vector<Passenger> passengers = Passenger::getAllPassengers();
+
+        int choice;
+
+        do{
+            cout<<"Select a passenger to remove: ";
+            cin >> choice;
+        } while(choice < 0 || choice > static_cast<int>passengers.size());
+        
+        Passenger* p=passengers[choice-1];
+        p->remove();
+        delete() p;
     }
 
     static vector<Director> getAllDirectors() {
