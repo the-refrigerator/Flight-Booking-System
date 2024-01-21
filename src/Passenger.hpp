@@ -100,7 +100,7 @@ public:
             f = &availableFlights[choice - 1];
 
             try {
-                if(f->getNumberOfTickets() != f->getCapacity()) {
+                if(f->getNumberOfTickets() < f->getCapacity()) {
                     this->flightNumber = f->getFlightNumber();
                     f->incrementTickets();
                 } else
@@ -118,6 +118,85 @@ public:
             exit(0);
         }
     }
+
+    void DeleteTicket() {
+        if(flightNumber != 0) {
+            Flight f = Flight::getFlightByFlightNumber(flightNumber);
+            f.decrementTickets();
+            flightNumber = 0;
+        } else {
+            cout << "You're not booked to any flight!" << endl;
+            exit(0);
+        }
+    }
+
+    void FindFlight(){
+        string input;
+        char choice;
+        vector<Flight> availableFlights;
+        Flight* f=nullptr;
+
+        cout<<"Would you like to search by destination or departure? ";
+        cin>>input;
+
+        if(input=="destination"){
+                cout<<"Please enter the destination: ";
+                cin>>input;
+                availableFlights=Flight::getFlightByArrivalAirport(input);
+        }    
+        else if(input== "departure"){
+                cout<<"Please enter the departure location: ";
+                cin>>input;
+                availableFlights=Flight::getFlightByDepartureAirport(input);
+
+            }
+            else{
+                cout<<"Invalid input"<<endl;
+                exit(0);
+            }
+        
+        
+        if(availableFlights.size()>0){
+            Flight::PrintFlightsVector(availableFlights);
+        do{
+            cout<<"Would you like to book a flight(y/n)? ";
+            cin>>choice;
+        }while(toupper(choice)!='Y' && toupper(choice)!='N');
+
+        if(toupper(choice)=='Y'){
+            int flightChoice;
+
+            cout<<"Please choose a flight: ";
+            cin>>flightChoice;
+
+            if(flightChoice>0 && flightChoice<=static_cast<int>(availableFlights.size())){
+
+                f=&availableFlights[flightChoice-1];
+                if(f->getNumberOfTickets() < f->getCapacity()) {
+                        this->flightNumber = f->getFlightNumber();
+                        f->incrementTickets();
+                    } else{
+                        cout<< "Flight full!";
+                        exit(0);
+                    }
+            }
+            else{
+                cout<<"Invalid choice"<<endl;
+                exit(0);
+            }
+            
+        }
+        else
+            exit(0);
+        }
+        else{
+            cout<<"No flights found"<<endl;
+            exit(0);
+        }
+    }
+           
+
+
     static vector<Passenger> getAllPassengers() {
         vector<Passenger> passengers;
 
@@ -271,6 +350,7 @@ public:
     void printPassenger() {
         cout << endl << endl << "Hello Passenger " << this->firstName << " " << this->lastName << endl << "Passport Number: " << this->passportNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
     }
+
 
     void remove() {
         // Execute a DELETE query to remove the passenger from the database

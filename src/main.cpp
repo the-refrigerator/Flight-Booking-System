@@ -56,15 +56,16 @@ void PassengerAlgorithm() {
         }
 
         try {
-            if(p->getFirstName() != "")
+            if(p->getFirstName() != ""){
                 p->printPassenger();
+                cout<<"You are booked to: "<<endl;}
             else
                 throw "User not found!";
         }
 
         catch(const char* s) {
             cerr << s << endl;
-            return;
+            exit(0);
 
         }
 
@@ -89,7 +90,7 @@ void PassengerAlgorithm() {
             break;
 
         default:
-            Flight::FindTicket();
+            p->Passenger::FindFlight();
     }
 
 }
@@ -123,7 +124,7 @@ void DirectorAlgorithm() {
 
         switch(ans) {
             case 1:
-                Director::AddFlight();
+                // Director::AddFlight();
                 break;
 
             case 2:

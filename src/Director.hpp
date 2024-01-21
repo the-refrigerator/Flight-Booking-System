@@ -89,58 +89,58 @@ public:
         return d;
     }
 
-    static void AddFlight() {
-        string arrA, deptA, arrT, depT;
-        time_t t_arrT, t_depT, t_additional;
-        tm timeInfo = {};
-        int cap;
+    // static void AddFlight() {
+    //     string arrA, deptA, arrT, depT;
+    //     time_t t_arrT, t_depT, t_additional;
+    //     tm timeInfo = {};
+    //     int cap;
 
-        cout << "Enter the following: " << endl;
+    //     cout << "Enter the following: " << endl;
 
-        cout << "Departure Airport: ";
-        cin >> deptA;
+    //     cout << "Departure Airport: ";
+    //     cin >> deptA;
 
-        cout << "Arrival Airport: ";
-        cin >> arrA;
+    //     cout << "Arrival Airport: ";
+    //     cin >> arrA;
 
-        cout << "Capacity: ";
-        cin >> cap;
+    //     cout << "Capacity: ";
+    //     cin >> cap;
 
-        cout << "Departure Time: ";
-        cin >> depT;
-        istringstream s1(depT);
-        s1 >> get_time(&timeInfo, "%I:%M %p");
-        t_depT = mktime(&timeInfo);
-        cout << "departure time: " << t_depT << endl;
+    //     cout << "Departure Time: ";
+    //     cin >> depT;
+    //     istringstream s1(depT);
+    //     s1 >> get_time(&timeInfo, "%I:%M %p");
+    //     t_depT = mktime(&timeInfo);
+    //     cout << "departure time: " << t_depT << endl;
 
-        try {
-            cin >> arrT;
-            cout << "Arrival Time: ";
-            cin >> arrT;
+    //     try {
+    //         cin >> arrT;
+    //         cout << "Arrival Time: ";
+    //         cin >> arrT;
 
-            istringstream s2(arrT);
-            s2 >> get_time(&timeInfo, "%I:%M %p");
-            t_arrT = mktime(&timeInfo);
-            cout << "arrival time: " << t_arrT << endl;
-
-
-            istringstream s3("00:59");
-            s3 >> get_time(&timeInfo, "%I:%M");
-            t_additional = mktime(&timeInfo);
-            cout << "additional: " << t_additional << endl;
-
-            if(abs(t_arrT) < abs(t_depT) + abs(t_additional))
-                throw("impossible flight");
-        }
+    //         istringstream s2(arrT);
+    //         s2 >> get_time(&timeInfo, "%I:%M %p");
+    //         t_arrT = mktime(&timeInfo);
+    //         cout << "arrival time: " << t_arrT << endl;
 
 
-        catch(const char* s) {
-            cout << s << endl;
-            exit(0);
-        }
+    //         istringstream s3("00:59");
+    //         s3 >> get_time(&timeInfo, "%I:%M");
+    //         t_additional = mktime(&timeInfo);
+    //         cout << "additional: " << t_additional << endl;
 
-        Flight::create(t_depT, t_arrT, deptA, arrA, cap);
-    }
+    //         if(abs(t_arrT) < abs(t_depT) + abs(t_additional))
+    //             throw("impossible flight");
+    //     }
+
+
+    //     catch(const char* s) {
+    //         cout << s << endl;
+    //         exit(0);
+    //     }
+
+    //     Flight::create(t_depT, t_arrT, deptA, arrA, cap);
+    // }
 
     static void RemoveFlight() {
         Flight::PrintFlights();
@@ -151,11 +151,10 @@ public:
         do{
             cout<<"Select a flight to remove: ";
             cin >> choice;
-        } while(choice < 0 || choice > static_cast<int>flights.size());
+        } while(choice < 0 || choice > static_cast<int>(flights.size()));
         
-        Flight* f=flights[choice-1];
+        Flight* f=&flights[choice-1];
         f->remove();
-        delete() f;
         }
 
     static void RemovePassenger() {
@@ -168,11 +167,10 @@ public:
         do{
             cout<<"Select a passenger to remove: ";
             cin >> choice;
-        } while(choice < 0 || choice > static_cast<int>passengers.size());
+        } while(choice < 0 || choice > static_cast<int>(passengers.size()));
         
-        Passenger* p=passengers[choice-1];
-        p->remove();
-        delete() p;
+        Passenger* p=&passengers[choice-1];
+        p->Passenger::remove();
     }
 
     static vector<Director> getAllDirectors() {

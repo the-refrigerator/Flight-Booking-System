@@ -204,6 +204,23 @@ public:
         for(int i = 0; i < static_cast<int>(availableFlights.size()); i++)
             cout << i + 1 << "\t" << availableFlights[i].flightNumber << "\t\t" << availableFlights[i].departureAirport << "\t\t\t" << availableFlights[i].departureTime << "\t" << availableFlights[i].arrivalAirport << "\t\t" << availableFlights[i].arrivalTime << "\t" << availableFlights[i].capacity - availableFlights[i].numberOFTickets << endl;
     }
+
+    static void PrintFlightsVector(vector<Flight> flights) {
+        cout << "List of flights: " << endl << "Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets" << endl;
+
+        for(int i = 0; i < static_cast<int>(flights.size()); i++)
+            cout << i + 1 << "\t" << flights[i].flightNumber << "\t\t" << flights[i].departureAirport << "\t\t\t" << flights[i].departureTime << "\t" << flights[i].arrivalAirport << "\t\t" << flights[i].arrivalTime << "\t" << flights[i].capacity - flights[i].numberOFTickets << endl;
+    }
+
+    void PrintFlight(){
+        cout << "Flight Number: " << flightNumber << endl;
+        cout << "Departure Airport: " << departureAirport << endl;
+        cout << "Departure Time: " << departureTime << endl;
+        cout << "Arrival Airport: " << arrivalAirport << endl;
+        cout << "Arrival Time: " << arrivalTime << endl;
+        cout << "Available Tickets: " << capacity - numberOFTickets << endl;
+    }
+
     // flightNumber
     int getFlightNumber() {
         return flightNumber;
@@ -253,6 +270,10 @@ public:
 
     void incrementTickets() {
         numberOFTickets++;
+    }
+
+void decrementTickets() {
+        numberOFTickets--;
     }
 
     void remove() {
