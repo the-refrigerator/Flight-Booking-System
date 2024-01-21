@@ -3,10 +3,6 @@
 #include <sqlite3.h>
 #include <string>
 #include <cctype>
-#include <ctime>
-#include <sstream>
-#include <iomanip>
-#include <cmath>
 
 #include "Passenger.hpp"
 #include "DataBaseConnection.hpp"
@@ -30,7 +26,7 @@ void PassengerAlgorithm() {
     do {
         cout << "Have you been on our flights before?(y/n): ";
         cin >> ans;
-    } while(toupper(ans) != 'N' && toupper(ans) !='Y'); 
+    } while(toupper(ans) != 'N' && toupper(ans) != 'Y');
 
     if(ans == 'y' || ans == 'Y') {
         bool  isWord = false;
@@ -59,37 +55,36 @@ void PassengerAlgorithm() {
             cout << p->getFirstName() << endl;
         }
 
-        try{
+        try {
             if(p->getFirstName() != "")
                 p->printPassenger();
-            else{
+            else
                 throw "User not found!";
-            }
         }
 
-        catch(const char* s){
-            cerr<< s<<endl;
-            return;              
+        catch(const char* s) {
+            cerr << s << endl;
+            return;
 
         }
 
-    }
-    else{
-        cout<<"Adding a new user:"<<endl;
-        p=Passenger::AddPassenger();
+    } else {
+        cout << "Adding a new user:" << endl;
+        p = Passenger::AddPassenger();
     }
 
-    do{
-    cout<<"What would you like to do?"<<endl<<"1. Add ticket"<<endl<<"2. Delete Ticket"<<endl<<"3. Find a flight"<<endl;
-    cin>>choice;
-    }while(choice !=1 && choice!=2 && choice!=3);
+    do {
+        cout << "What would you like to do?" << endl << "1. Add ticket" << endl << "2. Delete Ticket" << endl << "3. Find a flight" << endl;
+        cin >> choice;
+    } while(choice != 1 && choice != 2 && choice != 3);
 
-    if(choice==1)
-       p->AddTicket();
+    if(choice == 1)
+        p->AddTicket();
+
     // else if(choice==2)
     //         // p->DeleteTicket();
     //     else
-            //FindFlight;
+    //FindFlight;
 
 }
 
@@ -110,34 +105,37 @@ void DirectorAlgorithm() {
         } while(toupper(status) != 'N' && toupper(status) != 'O');
 
 
-        if(toupper(status) == 'N') {
-            Director* d= Director::AddDirector();
-        }
+        if(toupper(status) == 'N')
+            Director* d = Director::AddDirector();
 
 
-        do{
-        cout<<endl<<"Would would you like to do?"<<endl<<"1. Add a Flight"<<endl<<"2.Remove a Flight"<<endl<<"3.Add Passenger"<<endl<<"4.Remove Passenger"<<endl<<"5. View Flights"<<endl;
-        cin>>ans;
-        }while(ans!=1 && ans!=2 && ans!=3 && ans!=4 && ans!=5);
-        
+        do {
+            cout << endl << "Would would you like to do?" << endl << "1. Add a Flight" << endl << "2.Remove a Flight" << endl << "3.Add Passenger" << endl << "4.Remove Passenger" << endl << "5. View Flights" << endl;
+            cin >> ans;
+        } while(ans != 1 && ans != 2 && ans != 3 && ans != 4 && ans != 5);
 
-        switch(ans){
+
+        switch(ans) {
             case 1:
                 Director::AddFlight();
                 break;
+
             case 2:
                 Director::RemoveFlight();
                 break;
+
             case 3:
                 Passenger::AddPassenger();
                 break;
+
             case 4:
                 Director::RemovePassenger();
                 break;
+
             default:
                 Flight::PrintFlights();
         }
-        
+
     } else
         cout << "Wrong password!";
 
@@ -169,7 +167,7 @@ int main() {
     // Passenger* p = Passenger::create("John", "Doe", "123 Main St", "1234567890", "exmaple@email.com", 21);
 
     // cout << p->getPassportNumber() << endl;
-    cout << endl<<"Hello Worlde!!" << endl;
+    cout << endl << "Hello Worlde!!" << endl;
     return 0;
 }
 

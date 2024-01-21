@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include "model.hpp"
-#include <cmath>
 #include "utils.hpp"
 #include "Flight.hpp"
 
@@ -37,7 +36,6 @@ public:
         sqlite3_bind_int(stmt, 7, age);
 
         db.executeStatement(stmt);
-        // db.commit();
 
         return new Passenger(
                    passportNumber,
@@ -50,74 +48,73 @@ public:
                );
     }
 
-    static Passenger* AddPassenger(){
-        cout<<"Please enter the following:"<<endl;
+    static Passenger* AddPassenger() {
+        cout << "Please enter the following:" << endl;
         string Fname, Lname, Address, Number, Email;
         int Age;
         bool isEmail = false;
 
         getline(cin, Fname);
-            cout << "Name: ";
-            getline(cin, Fname);
+        cout << "Name: ";
+        getline(cin, Fname);
 
-            cout << "Last name: ";
-            getline(cin, Lname);
+        cout << "Last name: ";
+        getline(cin, Lname);
 
-            cout << "Address: ";
-            getline(cin, Address);
+        cout << "Address: ";
+        getline(cin, Address);
 
-            cout << "Age: ";
-            cin >> Age;
+        cout << "Age: ";
+        cin >> Age;
 
-            getline(cin, Number);
-            cout << "Phone Number: ";
-            getline(cin, Number);
+        getline(cin, Number);
+        cout << "Phone Number: ";
+        getline(cin, Number);
 
-            do {
-                cout << "Email: ";
-                getline(cin, Email);
-                isEmail = Utils::verify_email(Email);
-            } while(isEmail == false);
+        do {
+            cout << "Email: ";
+            getline(cin, Email);
+            isEmail = Utils::verify_email(Email);
+        } while(isEmail == false);
 
-            Passenger* p = Passenger::create(Fname, Lname, Address, Number, Email, Age);
-            p->printPassenger();
-            return p;
+        Passenger* p = Passenger::create(Fname, Lname, Address, Number, Email, Age);
+        p->printPassenger();
+        return p;
     }
 
-    
-    void AddTicket(){
 
-        if(flightNumber==0){
-        vector<Flight> availableFlights=Flight::getAllFlights();
-        Flight::PrintFlights();
-        Flight* f=nullptr;
+    void AddTicket() {
 
-        int choice;
+        if(flightNumber == 0) {
+            vector<Flight> availableFlights = Flight::getAllFlights();
+            Flight::PrintFlights();
+            Flight* f = nullptr;
 
-        do{
-        cout<<"Choose a Flight to book: ";
-        cin>>choice;
-        }while(choice>static_cast<int>(availableFlights.size()));
-        
-        f=&availableFlights[choice-1];
+            int choice;
 
-        try{
-            if(f->getNumberOfTickets()!=f->getCapacity()){
-                this->flightNumber=f->getFlightNumber();
-                f->incrementTickets();
+            do {
+                cout << "Choose a Flight to book: ";
+                cin >> choice;
+            } while(choice > static_cast<int>(availableFlights.size()));
+
+            f = &availableFlights[choice - 1];
+
+            try {
+                if(f->getNumberOfTickets() != f->getCapacity()) {
+                    this->flightNumber = f->getFlightNumber();
+                    f->incrementTickets();
+                } else
+                    throw "Flight full!";
             }
-            else
-                throw "Flight full!";
-        }
-        
-        catch(const char* s){
-            cout<<s;
-            exit(0);
-        }
 
-       
-    } else{
-            cout<<"You're already booked to flight "<<flightNumber<<endl;
+            catch(const char* s) {
+                cout << s;
+                exit(0);
+            }
+
+
+        } else {
+            cout << "You're already booked to flight " << flightNumber << endl;
             exit(0);
         }
     }
@@ -160,12 +157,13 @@ public:
         return passengers;
     }
 
-    static void printAllPassengers(){
-        vector<Passenger> passengers=getAllPassengers();
+    static void printAllPassengers() {
+        vector<Passenger> passengers = getAllPassengers();
 
-        cout<<endl<<"List of Passengers in the Airline: "<<endl<<"Passenger\tPassport Number\t\tName\t\tLast Name\t\tAddress\t\t\tEmail\t\t\t\tPhone Number\t\tAge"<<endl;
-        for(int i=0; i<static_cast<int>(passengers.size()); i++)
-            cout<<i+1<<"\t\t"<<passengers[i].passportNumber<<"\t\t"<<passengers[i].firstName<<"\t\t"<<passengers[i].lastName<<"\t\t\t"<<passengers[i].address<<"\t\t\t"<<passengers[i].email<<"\t\t"<<passengers[i].phoneNumber<<"\t\t"<<passengers[i].age<<endl;
+        cout << endl << "List of Passengers in the Airline: " << endl << "Passenger\tPassport Number\t\tName\t\tLast Name\t\tAddress\t\t\tEmail\t\t\t\tPhone Number\t\tAge" << endl;
+
+        for(int i = 0; i < static_cast<int>(passengers.size()); i++)
+            cout << i + 1 << "\t\t" << passengers[i].passportNumber << "\t\t" << passengers[i].firstName << "\t\t" << passengers[i].lastName << "\t\t\t" << passengers[i].address << "\t\t\t" << passengers[i].email << "\t\t" << passengers[i].phoneNumber << "\t\t" << passengers[i].age << endl;
     }
 
     static Passenger* getPassengerByPassportNumber(int passportNumber) {
@@ -274,6 +272,23 @@ public:
         cout << endl << endl << "Hello Passenger " << this->firstName << " " << this->lastName << endl << "Passport Number: " << this->passportNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
     }
 
+    void remove() {
+        // Execute a DELETE query to remove the passenger from the database
+        // Use the database connection from DataBaseConnection singleton
+        DataBaseConnection& db = DataBaseConnection::getInstance();
+        sqlite3_stmt* stmt;
+
+        const char* query = "DELETE FROM passengers WHERE passportNumber = ?";
+        int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
+
+        if (rc != SQLITE_OK)
+            throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
+
+        sqlite3_bind_int(stmt, 1, passportNumber);
+
+        db.executeStatement(stmt);
+    }
+
     void save() override {
         // Execute an UPDATE query to modify the passenger information in the database
         // Use the database connection from DataBaseConnection singleton
@@ -295,7 +310,6 @@ public:
         sqlite3_bind_int(stmt, 7, passportNumber);
 
         db.executeStatement(stmt);
-        // db.commit();
     }
 
     // passportNumber
@@ -359,7 +373,7 @@ private:
     string phoneNumber;
     string email;
     int age;
-    int flightNumber=0;
+    int flightNumber = 0;
 
     Passenger (int passportNumber, string firstName, string lastName, string address, string phoneNumber, string email, int age) {
         this->passportNumber = passportNumber;

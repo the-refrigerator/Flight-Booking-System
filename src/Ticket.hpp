@@ -32,7 +32,6 @@ public:
         sqlite3_bind_double(stmt, 5, price);
 
         db.executeStatement(stmt);
-        db.commit();
 
         return new Ticket(
                    ticketNumber,
@@ -126,6 +125,25 @@ public:
         return tickets;
     }
 
+    void remove() {
+        // Execute a DELETE query to remove the ticket from the database
+        // Use the database connection from DataBaseConnection singleton
+        DataBaseConnection& db = DataBaseConnection::getInstance();
+        sqlite3_stmt* stmt;
+
+        const char* query = "DELETE FROM tickets WHERE ticketNumber = ?";
+        int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
+
+        if (rc != SQLITE_OK) {
+            cerr << "Cannot prepare statement: " << sqlite3_errmsg(db.getDB()) << endl;
+            return;
+        }
+
+        sqlite3_bind_int(stmt, 1, ticketNumber);
+
+        db.executeStatement(stmt);
+    }
+
     void save() override {
         // Execute an UPDATE query to modify the ticket information in the database
         // Use the database connection from DataBaseConnection singleton
@@ -147,7 +165,6 @@ public:
         sqlite3_bind_int(stmt, 5, ticketNumber);
 
         db.executeStatement(stmt);
-        db.commit();
     }
 
 private:

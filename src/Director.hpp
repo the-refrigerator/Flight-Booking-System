@@ -3,11 +3,15 @@
 
 #include <sqlite3.h>
 #include <chrono>
+#include <ctime>
 #include <string>
 #include <vector>
+#include <iomanip>
 #include "model.hpp"
-#include <math.h>
 #include "utils.hpp"
+#include "Flight.hpp"
+#include "Passenger.hpp"
+
 
 using namespace std;
 
@@ -36,7 +40,6 @@ public:
         sqlite3_bind_int(stmt, 7, age);
 
         db.executeStatement(stmt);
-        // db.commit();
 
         return new Director(
                    idNumber,
@@ -49,100 +52,101 @@ public:
                );
     }
 
-    static Director* AddDirector(){
-            string Fname, Lname, Address, Number, Email;
-            int Age;
-                    bool isEmail = false;
+    static Director* AddDirector() {
+        string Fname, Lname, Address, Number, Email;
+        int Age;
+        bool isEmail = false;
 
 
         cout << "Please fill the following:" << endl;
 
-            getline(cin, Fname);
-            cout << "Name: ";
-            getline(cin, Fname);
+        getline(cin, Fname);
+        cout << "Name: ";
+        getline(cin, Fname);
 
-            cout << "Last name: ";
-            getline(cin, Lname);
+        cout << "Last name: ";
+        getline(cin, Lname);
 
-            cout << "Address: ";
-            getline(cin, Address);
+        cout << "Address: ";
+        getline(cin, Address);
 
-            cout << "Age: ";
-            cin >> Age;
+        cout << "Age: ";
+        cin >> Age;
 
-            getline(cin, Number);
-            cout << "Phone Number: ";
-            getline(cin, Number);
+        getline(cin, Number);
+        cout << "Phone Number: ";
+        getline(cin, Number);
 
-            do {
-                cout << "Email: ";
-                getline(cin, Email);
-                isEmail = Utils::verify_email(Email);
-            } while(isEmail == false);
+        do {
+            cout << "Email: ";
+            getline(cin, Email);
+            isEmail = Utils::verify_email(Email);
+        } while(isEmail == false);
 
 
-            Director* d = Director::create(Fname, Lname, Address, Number, Email, Age);
-            d->printDirector();
-            return d;
+        Director* d = Director::create(Fname, Lname, Address, Number, Email, Age);
+        d->printDirector();
+        return d;
     }
 
-        static void AddFlight(){
-             string arrA, deptA, arrT, depT;
-            time_t t_arrT, t_depT, t_additional;
-            tm timeInfo={};
-            int cap;
+    static void AddFlight() {
+        string arrA, deptA, arrT, depT;
+        time_t t_arrT, t_depT, t_additional;
+        tm timeInfo = {};
+        int cap;
 
-            cout<<"Enter the following: "<<endl;
+        cout << "Enter the following: " << endl;
 
-            cout<<"Departure Airport: ";
-            cin>>deptA;
+        cout << "Departure Airport: ";
+        cin >> deptA;
 
-            cout<<"Arrival Airport: ";
-            cin>>arrA;
+        cout << "Arrival Airport: ";
+        cin >> arrA;
 
-            cout<<"Capacity: ";
-            cin>>cap;
+        cout << "Capacity: ";
+        cin >> cap;
 
-            cout<<"Departure Time: ";
-            cin>>depT;
-            istringstream s1(depT);
-            s1>>get_time(&timeInfo, "%I:%M %p");
-            t_depT=mktime(&timeInfo);
-            cout<<"departure time: "<<t_depT<<endl;
+        cout << "Departure Time: ";
+        cin >> depT;
+        istringstream s1(depT);
+        s1 >> get_time(&timeInfo, "%I:%M %p");
+        t_depT = mktime(&timeInfo);
+        cout << "departure time: " << t_depT << endl;
 
-            try{
-                cin>>arrT;
-            cout<<"Arrival Time: ";
-            cin>>arrT;
+        try {
+            cin >> arrT;
+            cout << "Arrival Time: ";
+            cin >> arrT;
 
             istringstream s2(arrT);
-            s2>>get_time(&timeInfo, "%I:%M %p");
-            t_arrT=mktime(&timeInfo);
-            cout<<"arrival time: "<<t_arrT<<endl;
-            
+            s2 >> get_time(&timeInfo, "%I:%M %p");
+            t_arrT = mktime(&timeInfo);
+            cout << "arrival time: " << t_arrT << endl;
+
 
             istringstream s3("00:59");
-            s3>>get_time(&timeInfo, "%I:%M");
-            t_additional=mktime(&timeInfo);
-            cout<<"additional: "<<t_additional<<endl;
+            s3 >> get_time(&timeInfo, "%I:%M");
+            t_additional = mktime(&timeInfo);
+            cout << "additional: " << t_additional << endl;
 
-            if(abs(t_arrT)< abs(t_depT)+ abs(t_additional))
+            if(abs(t_arrT) < abs(t_depT) + abs(t_additional))
                 throw("impossible flight");
-            }
-
-            
-            catch(const char* s){
-                cout<<s<<endl;
-                exit(0);
-            }
-            Flight::create(t_depT, t_arrT, deptA, arrA, cap);
         }
 
-    static void RemoveFlight(){
+
+        catch(const char* s) {
+            cout << s << endl;
+            exit(0);
+        }
+
+        Flight::create(t_depT, t_arrT, deptA, arrA, cap);
+    }
+
+    static void RemoveFlight() {
         Flight::PrintFlights();
     }
 
-    static void RemovePassenger(){
+    static void RemovePassenger() {
         Passenger::printAllPassengers();
     }
 
@@ -218,6 +222,23 @@ public:
             return Director(0, "", "", "", "", "", 0);
     }
 
+    void remove() {
+        // Execute a DELETE query to remove the Director from the database
+        // Use the database connection from DataBaseConnection singleton
+        DataBaseConnection& db = DataBaseConnection::getInstance();
+        sqlite3_stmt* stmt;
+
+        const char* query = "DELETE FROM directors WHERE idNumber = ?";
+        int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
+
+        if (rc != SQLITE_OK)
+            throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
+
+        sqlite3_bind_int(stmt, 1, idNumber);
+
+        db.executeStatement(stmt);
+    }
+
     void save() override {
         // Execute an UPDATE query to modify the Director information in the database
         // Use the database connection from DataBaseConnection singleton
@@ -239,11 +260,10 @@ public:
         sqlite3_bind_int(stmt, 7, idNumber);
 
         db.executeStatement(stmt);
-        // db.commit();
     }
 
-     void printDirector(){
-        cout<<endl<<endl<<"Hello Director "<<this->firstName<<" "<<this->lastName<<endl<<"ID Number: "<<this->idNumber<<endl<<"Age: "<<this->age<<endl<<"Address: "<<address<<endl<<"PhoneNumber: "<<this->phoneNumber<<endl<<"email: "<<this->email<<endl<<endl;
+    void printDirector() {
+        cout << endl << endl << "Hello Director " << this->firstName << " " << this->lastName << endl << "ID Number: " << this->idNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
     }
 
     // idNumber

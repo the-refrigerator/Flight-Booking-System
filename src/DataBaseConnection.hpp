@@ -79,8 +79,8 @@ private:
         const char* createFlightsTableQuery =
             "CREATE TABLE IF NOT EXISTS flights ("
             "    flightNumber INTEGER PRIMARY KEY,"
-            "    departureTime INTEGER,"
-            "    arrivalTime INTEGER,"
+            "    departureTime TEXT,"
+            "    arrivalTime TEXT,"
             "    departureAirport TEXT,"
             "    arrivalAirport TEXT,"
             "    capacity INTEGER"

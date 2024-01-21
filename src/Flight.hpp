@@ -33,7 +33,6 @@ public:
         sqlite3_bind_int(stmt, 6, capacity);
 
         db.executeStatement(stmt);
-        db.commit();
 
         return new Flight(
                    flightNumber,
@@ -65,7 +64,7 @@ public:
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
 
-            
+
             //if the number of tickets<capacity
             // if (COUNT<=capacity)
             flights.push_back(
@@ -196,12 +195,13 @@ public:
         return flights;
     }
 
-    static void PrintFlights(){
-        vector<Flight> availableFlights=getAllFlights();
+    static void PrintFlights() {
+        vector<Flight> availableFlights = getAllFlights();
 
-        cout<<"List of flights: " << endl<<"Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets"<<endl;
-        for(int i=0; i<static_cast<int>(availableFlights.size()); i++)
-            cout<<i+1<<"\t"<<availableFlights[i].flightNumber<<"\t\t"<<availableFlights[i].departureAirport<<"\t\t\t"<<availableFlights[i].departureTime<<"\t"<<availableFlights[i].arrivalAirport<<"\t\t"<<availableFlights[i].arrivalTime<<"\t"<<availableFlights[i].capacity - availableFlights[i].numberOFTickets<<endl;
+        cout << "List of flights: " << endl << "Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets" << endl;
+
+        for(int i = 0; i < static_cast<int>(availableFlights.size()); i++)
+            cout << i + 1 << "\t" << availableFlights[i].flightNumber << "\t\t" << availableFlights[i].departureAirport << "\t\t\t" << availableFlights[i].departureTime << "\t" << availableFlights[i].arrivalAirport << "\t\t" << availableFlights[i].arrivalTime << "\t" << availableFlights[i].capacity - availableFlights[i].numberOFTickets << endl;
     }
     // flightNumber
     int getFlightNumber() {
@@ -209,7 +209,7 @@ public:
     }
 
     // departureTime
-    time_t getDepartureTime() {
+    string getDepartureTime() {
         return departureTime;
     }
     void setDepartureTime(time_t departureTime) {
@@ -217,7 +217,7 @@ public:
     }
 
     // arrivalTime
-    time_t getArrivalTime() {
+    string getArrivalTime() {
         return arrivalTime;
     }
     void setArrivalTime(time_t arrivalTime) {
@@ -246,15 +246,29 @@ public:
     }
 
     //Number of Tickets
-    int getNumberOfTickets(){
+    int getNumberOfTickets() {
         return numberOFTickets;
     }
 
-    void incrementTickets(){
+    void incrementTickets() {
         numberOFTickets++;
     }
 
-    // Save to database
+    void remove() {
+        DataBaseConnection& db = DataBaseConnection::getInstance();
+        sqlite3_stmt* stmt;
+
+        const char* query = "DELETE FROM flights WHERE flightNumber = ?";
+        int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
+
+        if (rc != SQLITE_OK)
+            throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
+
+        sqlite3_bind_int(stmt, 1, flightNumber);
+
+        db.executeStatement(stmt);
+    }
+
     void save() override {
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
@@ -265,8 +279,8 @@ public:
         if (rc != SQLITE_OK)
             throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-        sqlite3_bind_int(stmt, 1, departureTime);
-        sqlite3_bind_int(stmt, 2, arrivalTime);
+        sqlite3_bind_text(stmt, 1, departureTime.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, arrivalTime.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 3, departureAirport.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 4, arrivalAirport.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_int(stmt, 5, capacity);
@@ -279,14 +293,12 @@ public:
 
         // Finalize the statement
         sqlite3_finalize(stmt);
-
-        db.commit();
     }
 
 private:
     int flightNumber;
-    time_t departureTime;
-    time_t arrivalTime;
+    string departureTime;
+    string arrivalTime;
     string departureAirport;
     string arrivalAirport;
     int capacity;
