@@ -13,7 +13,7 @@ using namespace std;
 
 class Flight : public Model {
 public:
-    static Flight* create(time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
+    static Flight* create(string departureTime, string arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
         DataBaseConnection& db = DataBaseConnection::getInstance();
         sqlite3_stmt* stmt;
 
@@ -26,8 +26,8 @@ public:
         int flightNumber = chrono::system_clock::now().time_since_epoch().count();
 
         sqlite3_bind_int(stmt, 1, flightNumber);
-        sqlite3_bind_int(stmt, 2, departureTime);
-        sqlite3_bind_int(stmt, 3, arrivalTime);
+        sqlite3_bind_text(stmt, 2, departureTime.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 3, arrivalTime.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 4, departureAirport.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 5, arrivalAirport.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_int(stmt, 6, capacity);
@@ -58,8 +58,8 @@ public:
 
         while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
             int flightNumber = sqlite3_column_int(stmt, 0);
-            time_t departureTime = static_cast<time_t>(sqlite3_column_int(stmt, 1));
-            time_t arrivalTime = static_cast<time_t>(sqlite3_column_int(stmt, 2));
+            const char* departureTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            const char* arrivalTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* departureAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
@@ -98,8 +98,9 @@ public:
         sqlite3_bind_int(stmt, 1, flightNumber);
 
         if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-            time_t departureTime = static_cast<time_t>(sqlite3_column_int(stmt, 1));
-            time_t arrivalTime = static_cast<time_t>(sqlite3_column_int(stmt, 2));
+            int flightNumber = sqlite3_column_int(stmt, 0);
+            const char* departureTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            const char* arrivalTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* departureAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
@@ -129,8 +130,8 @@ public:
 
         while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
             int flightNumber = sqlite3_column_int(stmt, 0);
-            time_t departureTime = static_cast<time_t>(sqlite3_column_int(stmt, 1));
-            time_t arrivalTime = static_cast<time_t>(sqlite3_column_int(stmt, 2));
+            const char* departureTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            const char* arrivalTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* departureAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
@@ -168,8 +169,8 @@ public:
 
         while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
             int flightNumber = sqlite3_column_int(stmt, 0);
-            time_t departureTime = static_cast<time_t>(sqlite3_column_int(stmt, 1));
-            time_t arrivalTime = static_cast<time_t>(sqlite3_column_int(stmt, 2));
+            const char* departureTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            const char* arrivalTime = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
             const char* departureAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
             int capacity = sqlite3_column_int(stmt, 5);
@@ -212,7 +213,7 @@ public:
     string getDepartureTime() {
         return departureTime;
     }
-    void setDepartureTime(time_t departureTime) {
+    void setDepartureTime(string departureTime) {
         this->departureTime = departureTime;
     }
 
@@ -220,7 +221,7 @@ public:
     string getArrivalTime() {
         return arrivalTime;
     }
-    void setArrivalTime(time_t arrivalTime) {
+    void setArrivalTime(string arrivalTime) {
         this->arrivalTime = arrivalTime;
     }
 
@@ -304,7 +305,7 @@ private:
     int capacity;
     int numberOFTickets;
 
-    Flight(int flightNumber, time_t departureTime, time_t arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
+    Flight(int flightNumber, string departureTime, string arrivalTime, string departureAirport, string arrivalAirport, int capacity) {
         this->flightNumber = flightNumber;
         this->departureTime = departureTime;
         this->arrivalTime = arrivalTime;
