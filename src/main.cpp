@@ -4,13 +4,10 @@
 #include <string>
 #include <cctype>
 
-#include "Passenger.hpp"
-#include "DataBaseConnection.hpp"
-#include "model.hpp"
-#include "Flight.hpp"
-#include "Ticket.hpp"
-#include "Director.hpp"
-#include "utils.hpp"
+#include "headers/Passenger.h"
+#include "headers/Flight.h"
+#include "headers/Director.h"
+#include "headers/utils.h"
 
 using namespace std;
 using namespace chrono;
@@ -56,10 +53,10 @@ void PassengerAlgorithm() {
         }
 
         try {
-            if(p->getFirstName() != ""){
+            if(p->getFirstName() != "") {
                 p->printPassenger();
-                cout<<"You are booked to: "<<endl;}
-            else
+                cout << "You are booked to: " << endl;
+            } else
                 throw "User not found!";
         }
 
@@ -92,7 +89,6 @@ void PassengerAlgorithm() {
         default:
             p->Passenger::FindFlight();
     }
-
 }
 
 
@@ -124,7 +120,7 @@ void DirectorAlgorithm() {
 
         switch(ans) {
             case 1:
-                // Director::AddFlight();
+                Director::AddFlight();
                 break;
 
             case 2:

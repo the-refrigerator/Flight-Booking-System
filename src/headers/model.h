@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "DataBaseConnection.hpp"
+#include "DataBaseConnection.h"
 
 class Model {
 public:
