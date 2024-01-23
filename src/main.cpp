@@ -28,7 +28,13 @@ void PassengerAlgorithm() {
     do {
         cout << "Have you been on our flights before?(y/n): ";
         cin >> ans;
-    } while(toupper(ans) != 'N' && toupper(ans) != 'Y');
+
+        if(toupper(ans) == 'Y' || toupper(ans) == 'N')
+            break;
+
+        cin.clear();
+        cin.ignore(10000, '\n');
+    } while(true);
 
     clear_screen();
 
@@ -134,7 +140,13 @@ void DirectorAlgorithm() {
         do {
             cout << "Are you new or old? (n/o) ";
             cin >> status;
-        } while(toupper(status) != 'N' && toupper(status) != 'O');
+
+            if(toupper(status) == 'N' || toupper(status) == 'O')
+                break;
+
+            cin.clear();
+            cin.ignore(10000, '\n');
+        } while(true);
 
 
         if(toupper(status) == 'N')
@@ -198,7 +210,13 @@ int main() {
     do {
         cout << "Are you a passenger or a director? (p/d) ";
         cin >> person;
-    } while(toupper(person) != 'P' && toupper(person) != 'D');
+
+        if (toupper(person) == 'P' || toupper(person) == 'D')
+            break;
+
+        cin.clear();
+        cin.ignore(10000, '\n');
+    } while(true);
 
     if (toupper(person) == 'P')
         PassengerAlgorithm();
