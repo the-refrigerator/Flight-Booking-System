@@ -403,6 +403,9 @@ void Passenger::remove() {
     DataBaseConnection& db = DataBaseConnection::getInstance();
     sqlite3_stmt* stmt;
 
+    for(Ticket t : Ticket::getAllTicketsOfPassenger(this->passportNumber))
+        t.remove();
+
     const char* query = "DELETE FROM passengers WHERE passportNumber = ?";
     int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 

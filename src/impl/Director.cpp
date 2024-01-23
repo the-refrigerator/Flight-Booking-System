@@ -8,7 +8,7 @@
 #include "../headers/utils.h"
 #include "../headers/Flight.h"
 #include "../headers/Passenger.h"
-#include "../headers/utils.h"
+#include "../headers/Ticket.h"
 
 using namespace std;
 
@@ -108,12 +108,11 @@ void Director::AddFlight() {
     }
 
     cout << "Departure Time: ";
-    cin >> depT;
+    getline(cin, depT);
 
     try {
-        cin >> arrT;
         cout << "Arrival Time: ";
-        cin >> arrT;
+        getline(cin, arrT);
     } catch(const char* s) {
         cout << s << endl;
         exit(1);

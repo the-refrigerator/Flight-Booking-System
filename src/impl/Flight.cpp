@@ -284,6 +284,11 @@ void Flight::remove() {
     DataBaseConnection& db = DataBaseConnection::getInstance();
     sqlite3_stmt* stmt;
 
+    Ticket::getAllTicketsOfFlight(this->getFlightNumber());
+
+    for(Ticket t : Ticket::getAllTicketsOfFlight(this->getFlightNumber()))
+        t.remove();
+
     const char* query = "DELETE FROM flights WHERE flightNumber = ?";
     int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
 
