@@ -78,6 +78,7 @@ void PassengerAlgorithm() {
     }
 
     while(true) {
+        clear_screen();
         choice = -1;
         cout
                 << "What would you like to do?" << endl
