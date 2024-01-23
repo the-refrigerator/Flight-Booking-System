@@ -97,8 +97,8 @@ void DataBaseConnection::createTables() {
         "    passportNumber INTEGER,"
         "    seatNumber TEXT,"
         "    price REAL,"
-        "    FOREIGN KEY (flightNumber) REFERENCES flights(flightNumber),"
-        "    FOREIGN KEY (passportNumber) REFERENCES passengers(passportNumber)"
+        "    FOREIGN KEY (flightNumber) REFERENCES flights(flightNumber) ON DELETE CASCADE,"
+        "    FOREIGN KEY (passportNumber) REFERENCES passengers(passportNumber) ON DELETE CASCADE"
         ");";
 
     const char* createDirectorsTableQuery =
