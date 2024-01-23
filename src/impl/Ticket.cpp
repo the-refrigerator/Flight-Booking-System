@@ -2,6 +2,7 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <iostream>
 #include "../headers/DataBaseConnection.h"
 #include "../headers/Ticket.h"
 
@@ -19,7 +20,7 @@ Ticket* Ticket::create(int flightNumber, int passportNumber, string seatNumber, 
     if (rc != SQLITE_OK)
         throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-    int ticketNumber = static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count()));
+    int ticketNumber = abs(static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count())));
 
     sqlite3_bind_int(stmt, 1, ticketNumber);
     sqlite3_bind_int(stmt, 2, flightNumber);
@@ -36,6 +37,43 @@ Ticket* Ticket::create(int flightNumber, int passportNumber, string seatNumber, 
                seatNumber,
                price
            );
+}
+
+Ticket* Ticket::getTicketByTicketNumber(int ticketNumber) {
+    // Execute a SELECT query to fetch a ticket from the database
+    // Use the database connection from DataBaseConnection singleton
+    DataBaseConnection& db = DataBaseConnection::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* query = "SELECT * FROM tickets WHERE ticketNumber = ?";
+    int rc = sqlite3_prepare_v2(db.getDB(), query, -1, &stmt, 0);
+
+    if (rc != SQLITE_OK) {
+        cerr << "Cannot prepare statement: " << sqlite3_errmsg(db.getDB()) << endl;
+        return nullptr;
+    }
+
+    sqlite3_bind_int(stmt, 1, ticketNumber);
+
+    if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        int ticketNumber = sqlite3_column_int(stmt, 0);
+        int flightNumber = sqlite3_column_int(stmt, 1);
+        int passportNumber = sqlite3_column_int(stmt, 2);
+        const char* seatNumber = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        double price = sqlite3_column_double(stmt, 4);
+
+        return new Ticket(
+                   ticketNumber,
+                   flightNumber,
+                   passportNumber,
+                   seatNumber,
+                   price
+               );
+    }
+
+    sqlite3_finalize(stmt);
+
+    return new Ticket(0, 0, 0, "", 0);
 }
 
 vector<Ticket> Ticket::getAllTicketsOfFlight(int flightNumber) {
@@ -161,6 +199,26 @@ void Ticket::save() {
     sqlite3_bind_int(stmt, 5, ticketNumber);
 
     db.executeStatement(stmt);
+}
+
+int Ticket::getTicketNumber() {
+    return ticketNumber;
+}
+
+int Ticket::getFlightNumber() {
+    return flightNumber;
+}
+
+int Ticket::getPassportNumber() {
+    return passportNumber;
+}
+
+string Ticket::getSeatNumber() {
+    return seatNumber;
+}
+
+double Ticket::getPrice() {
+    return price;
 }
 
 Ticket::Ticket (int ticketNumber, int flightNumber, int passportNumber, string seatNumber, double price) {

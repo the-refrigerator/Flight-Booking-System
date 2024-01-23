@@ -20,6 +20,7 @@ public:
     static Passenger* getPassengerByEmail(string email);
     static Passenger* getPassengerByPhoneNumber(string Number);
     void printPassenger();
+    void PrintTickets();
     void remove();
     void save() override;
     int getPassportNumber();

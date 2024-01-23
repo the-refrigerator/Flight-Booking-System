@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <ostream>
 #include <sqlite3.h>
 #include <string>
 #include <cctype>
@@ -10,9 +11,13 @@
 #include "headers/utils.h"
 
 using namespace std;
-using namespace chrono;
 
 const string password = "Airline167";
+
+void clear_screen() {
+    // http://stackoverflow.com/questions/17335816/ddg#32008479
+    cout << "\033[2J\033[1;1H";
+}
 
 void PassengerAlgorithm() {
     char ans;
@@ -25,8 +30,10 @@ void PassengerAlgorithm() {
         cin >> ans;
     } while(toupper(ans) != 'N' && toupper(ans) != 'Y');
 
+    clear_screen();
+
     if(ans == 'y' || ans == 'Y') {
-        bool  isWord = false;
+        bool isWord = false;
         cout << "Choose method of search:\n1. Passport Number\n2. email\n3. Phone Number" << endl;
         cin >> choice;
 
@@ -53,17 +60,16 @@ void PassengerAlgorithm() {
         }
 
         try {
-            if(p->getFirstName() != "") {
+            if(p->getFirstName() != "")
                 p->printPassenger();
-                cout << "You are booked to: " << endl;
-            } else
+
+            else
                 throw "User not found!";
         }
 
         catch(const char* s) {
             cerr << s << endl;
             exit(0);
-
         }
 
     } else {
@@ -71,31 +77,53 @@ void PassengerAlgorithm() {
         p = Passenger::AddPassenger();
     }
 
-    do {
-        cout << "What would you like to do?" << endl << "1. Add ticket" << endl << "2. Delete Ticket" << endl << "3. Find a flight" << endl;
+    while(true) {
+        choice = -1;
+        cout
+                << "What would you like to do?" << endl
+                << "\t1. Add ticket" << endl
+                << "\t2. Delete Ticket" << endl
+                << "\t3. Find a flight" << endl
+                << "\t4. View your tickets" << endl
+                << "\t0. Exit" << endl;
         cin >> choice;
-    } while(choice != 1 && choice != 2 && choice != 3);
 
+        switch(choice) {
+            case 1:
+                p->AddTicket();
+                break;
 
-    switch(choice) {
-        case 1:
-            p->AddTicket();
-            break;
+            case 2:
+                p->DeleteTicket();
+                break;
 
-        case 2:
-            p->DeleteTicket();
-            break;
+            case 3:
+                p->Passenger::FindFlight();
+                break;
 
-        default:
-            p->Passenger::FindFlight();
+            case 4:
+                p->PrintTickets();
+                break;
+
+            case 0:
+                cout << "Thank you for using our system!" << endl;
+                exit(0);
+                break;
+
+            default:
+                cout << "Invalid input!" << endl;
+        }
+
+        cout << "Press any key to continue..." << endl;
+        cin.get();
+        cin.ignore();
     }
 }
-
-
 
 void DirectorAlgorithm() {
     string pass;
     int ans;
+
     cout << "Enter password to verify your identity: ";
     cin >> pass;
 
@@ -109,53 +137,62 @@ void DirectorAlgorithm() {
 
 
         if(toupper(status) == 'N')
-            Director* d = Director::AddDirector();
+            Director::AddDirector();
 
 
-        do {
-            cout << endl << "Would would you like to do?" << endl << "1. Add a Flight" << endl << "2.Remove a Flight" << endl << "3.Add Passenger" << endl << "4.Remove Passenger" << endl << "5. View Flights" << endl;
+        while(true) {
+            clear_screen();
+            cout << endl
+                 << "Would would you like to do?" << endl
+                 << "\t1. Add a Flight" << endl
+                 << "\t2. Remove a Flight" << endl
+                 << "\t3. Add Passenger" << endl
+                 << "\t4. Remove Passenger" << endl
+                 << "\t5. View Flights" << endl
+                 << "\t0. Exit" << endl;
             cin >> ans;
-        } while(ans != 1 && ans != 2 && ans != 3 && ans != 4 && ans != 5);
 
+            switch(ans) {
+                case 1:
+                    Director::AddFlight();
+                    break;
 
-        switch(ans) {
-            case 1:
-                Director::AddFlight();
-                break;
+                case 2:
+                    Director::RemoveFlight();
+                    break;
 
-            case 2:
-                Director::RemoveFlight();
-                break;
+                case 3:
+                    Passenger::AddPassenger();
+                    break;
 
-            case 3:
-                Passenger::AddPassenger();
-                break;
+                case 4:
+                    Director::RemovePassenger();
+                    break;
 
-            case 4:
-                Director::RemovePassenger();
-                break;
+                case 5:
+                    Flight::PrintFlights();
+                    break;
 
-            default:
-                Flight::PrintFlights();
+                case 0:
+                    cout << "Thank you for using our system!" << endl;
+                    exit(0);
+                    break;
+
+                default:
+                    cout << "Invalid input!" << endl;
+            }
+
+            cout << "Press any key to continue..." << endl;
+            cin.get();
+            cin.ignore();
         }
-
     } else
         cout << "Wrong password!";
 
 }
 
 int main() {
-    string input;
     char person = 'k';
-
-    do {
-        cin.clear();
-        cout << "enter 0000 to exit: ";
-        getline(cin, input);
-    } while (!cin);
-
-    if (input == "0000")
-        exit(0);
 
     do {
         cout << "Are you a passenger or a director? (p/d) ";
@@ -167,10 +204,6 @@ int main() {
     else if (toupper(person) == 'D')
         DirectorAlgorithm();
 
-    // Passenger* p = Passenger::create("John", "Doe", "123 Main St", "1234567890", "exmaple@email.com", 21);
-
-    // cout << p->getPassportNumber() << endl;
-    cout << endl << "Hello Worlde!!" << endl;
     return 0;
 }
 

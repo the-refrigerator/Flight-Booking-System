@@ -1,5 +1,7 @@
+#include <ostream>
 #include <sqlite3.h>
 #include <chrono>
+#include <iostream>
 #include <string>
 #include <vector>
 #include "../headers/Director.h"
@@ -23,7 +25,7 @@ Director* Director::create(string firstName, string lastName, string address, st
         throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
     //cast to long to avoid negative numbers
-    int idNumber = static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count()));
+    int idNumber = abs(static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count())));
 
     sqlite3_bind_int(stmt, 1, idNumber);
     sqlite3_bind_text(stmt, 2, firstName.c_str(), -1, SQLITE_STATIC);
@@ -97,6 +99,13 @@ void Director::AddFlight() {
 
     cout << "Capacity: ";
     cin >> cap;
+
+    while(!cin || cap <= 0) {
+        cout << "Invalid input!" << endl;
+        cin.clear();
+        cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+        cin >> cap;
+    }
 
     cout << "Departure Time: ";
     cin >> depT;

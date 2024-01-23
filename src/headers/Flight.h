@@ -18,6 +18,7 @@ public:
     static void PrintFlights();
     static void PrintFlightsVector(vector<Flight> flights);
     void PrintFlight();
+    int numberOfTickets();
     int getFlightNumber();
     string getDepartureTime();
     void setDepartureTime(string departureTime);
@@ -41,7 +42,6 @@ private:
     string departureAirport;
     string arrivalAirport;
     int capacity;
-    int numberOFTickets;
     Flight(int flightNumber, string departureTime, string arrivalTime, string departureAirport, string arrivalAirport, int capacity);
 };
 

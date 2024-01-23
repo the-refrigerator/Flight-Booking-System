@@ -2,8 +2,10 @@
 #include <sqlite3.h>
 #include <chrono>
 #include <string>
+#include <iostream>
 #include "../headers/DataBaseConnection.h"
 #include "../headers/Flight.h"
+#include "../headers/Ticket.h"
 
 using namespace std;
 
@@ -17,7 +19,7 @@ Flight* Flight::create(string departureTime, string arrivalTime, string departur
     if (rc != SQLITE_OK)
         throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-    int flightNumber = static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count()));
+    int flightNumber = abs(static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count())));
 
     sqlite3_bind_int(stmt, 1, flightNumber);
     sqlite3_bind_text(stmt, 2, departureTime.c_str(), -1, SQLITE_STATIC);
@@ -169,10 +171,6 @@ vector<Flight> Flight::getFlightByArrivalAirport(string arrivalAirport) {
         const char* arrivalAirport = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
         int capacity = sqlite3_column_int(stmt, 5);
 
-        // SELECT COUNT(*) AS row_count
-        // FROM flights;
-        //if the number of tickets<capacity
-        // if (COUNT<=capacity)
         flights.push_back(
             Flight(
                 flightNumber,
@@ -193,17 +191,36 @@ vector<Flight> Flight::getFlightByArrivalAirport(string arrivalAirport) {
 void Flight::PrintFlights() {
     vector<Flight> availableFlights = getAllFlights();
 
-    cout << "List of flights: " << endl << "Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets" << endl;
+    cout
+            << "List of flights: " << endl
+            << "Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets" << endl;
 
     for(int i = 0; i < static_cast<int>(availableFlights.size()); i++)
-        cout << i + 1 << "\t" << availableFlights[i].flightNumber << "\t\t" << availableFlights[i].departureAirport << "\t\t\t" << availableFlights[i].departureTime << "\t" << availableFlights[i].arrivalAirport << "\t\t" << availableFlights[i].arrivalTime << "\t" << availableFlights[i].capacity - availableFlights[i].numberOFTickets << endl;
+        cout
+                << i + 1
+                << "\t"
+                << availableFlights[i].flightNumber
+                << "\t\t"
+                << availableFlights[i].departureAirport
+                << "\t\t\t"
+                << availableFlights[i].departureTime << "\t"
+                << availableFlights[i].arrivalAirport << "\t\t"
+                << availableFlights[i].arrivalTime << "\t"
+                << availableFlights[i].capacity - availableFlights[i].numberOfTickets() << endl;
 }
 
 void Flight::PrintFlightsVector(vector<Flight> flights) {
     cout << "List of flights: " << endl << "Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets" << endl;
 
     for(int i = 0; i < static_cast<int>(flights.size()); i++)
-        cout << i + 1 << "\t" << flights[i].flightNumber << "\t\t" << flights[i].departureAirport << "\t\t\t" << flights[i].departureTime << "\t" << flights[i].arrivalAirport << "\t\t" << flights[i].arrivalTime << "\t" << flights[i].capacity - flights[i].numberOFTickets << endl;
+        cout
+                << i + 1 << "\t"
+                << flights[i].flightNumber << "\t\t"
+                << flights[i].departureAirport << "\t\t\t"
+                << flights[i].departureTime << "\t"
+                << flights[i].arrivalAirport << "\t\t"
+                << flights[i].arrivalTime << "\t"
+                << flights[i].capacity - flights[i].numberOfTickets() << endl;
 }
 
 void Flight::PrintFlight() {
@@ -212,7 +229,13 @@ void Flight::PrintFlight() {
     cout << "Departure Time: " << departureTime << endl;
     cout << "Arrival Airport: " << arrivalAirport << endl;
     cout << "Arrival Time: " << arrivalTime << endl;
-    cout << "Available Tickets: " << capacity - numberOFTickets << endl;
+    cout << "Available Tickets: " << capacity - numberOfTickets() << endl;
+}
+
+int Flight::numberOfTickets() {
+    vector<Ticket> tickets = Ticket::getAllTicketsOfFlight(this->flightNumber);
+
+    return static_cast<int>(tickets.size());
 }
 
 // flightNumber
@@ -255,19 +278,6 @@ void Flight::setArrivalAirport(string arrivalAirport) {
 // capacity
 int Flight::getCapacity() {
     return capacity;
-}
-
-//Number of Tickets
-int Flight::getNumberOfTickets() {
-    return numberOFTickets;
-}
-
-void Flight::incrementTickets() {
-    numberOFTickets++;
-}
-
-void Flight::decrementTickets() {
-    numberOFTickets--;
 }
 
 void Flight::remove() {

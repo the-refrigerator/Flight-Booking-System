@@ -2,9 +2,11 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <iostream>
 #include "../headers/Passenger.h"
 #include "../headers/utils.h"
 #include "../headers/Flight.h"
+#include "../headers/Ticket.h"
 
 using namespace std;
 Passenger* Passenger::create(string firstName, string lastName, string address, string phoneNumber, string email, int age) {
@@ -19,7 +21,7 @@ Passenger* Passenger::create(string firstName, string lastName, string address, 
     if (rc != SQLITE_OK)
         throw runtime_error("Cannot prepare statement: " + string(sqlite3_errmsg(db.getDB())));
 
-    long passportNumber = static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count()));
+    int passportNumber = abs(static_cast<int>(abs(chrono::system_clock::now().time_since_epoch().count())));
 
     sqlite3_bind_int(stmt, 1, passportNumber);
     sqlite3_bind_text(stmt, 2, firstName.c_str(), -1, SQLITE_STATIC);
@@ -76,16 +78,21 @@ Passenger* Passenger::AddPassenger() {
     return p;
 }
 
-
 void Passenger::AddTicket() {
+    vector<Flight> availableFlights = Flight::getAllFlights();
 
-    if(flightNumber == 0) {
-        vector<Flight> availableFlights = Flight::getAllFlights();
-        Flight::PrintFlights();
-        Flight* f = nullptr;
+    if(availableFlights.size() == 0) {
+        cout << "No flights available!" << endl;
+        return;
+    }
 
-        int choice;
+    Flight::PrintFlights();
+    Flight* f = nullptr;
 
+    int choice;
+    string seat;
+
+    while(true) {
         do {
             cout << "Choose a Flight to book: ";
             cin >> choice;
@@ -93,35 +100,63 @@ void Passenger::AddTicket() {
 
         f = &availableFlights[choice - 1];
 
-        try {
-            if(f->getNumberOfTickets() < f->getCapacity()) {
-                this->flightNumber = f->getFlightNumber();
-                f->incrementTickets();
-            } else
-                throw "Flight full!";
-        }
+        if(f->numberOfTickets() < f->getCapacity())
+            break;
+        else
+            cout << "Flight full! Please choose another flight." << endl;
+    }
 
-        catch(const char* s) {
-            cout << s;
-            exit(0);
-        }
+    cout << "Please choose a seat: ";
+    cin >> seat;
 
-
-    } else {
-        cout << "You're already booked to flight " << flightNumber << endl;
+    try {
+        Ticket::create(flightNumber, passportNumber, seat, 0.0);
+    } catch(const char* s) {
+        cout << s;
         exit(0);
     }
+
 }
 
 void Passenger::DeleteTicket() {
-    if(flightNumber != 0) {
-        Flight f = Flight::getFlightByFlightNumber(flightNumber);
-        f.decrementTickets();
-        flightNumber = 0;
-    } else {
-        cout << "You're not booked to any flight!" << endl;
-        exit(0);
+    vector<Ticket> tickets = Ticket::getAllTicketsOfPassenger(passportNumber);
+    int ticketNumber;
+
+    if(tickets.size() == 0) {
+        cout << "No tickets found!" << endl;
+        return;
     }
+
+    for(int i = 0; i < static_cast<int>(tickets.size()); i++)
+        cout
+                << i + 1 << ". "
+                << tickets[i].getTicketNumber() << "\t"
+                << tickets[i].getFlightNumber() << "\t"
+                << tickets[i].getSeatNumber() << endl;
+
+    while(true) {
+        cout << "Please choose a ticket to delete: ";
+        cin >> ticketNumber;
+
+        if(ticketNumber <= 0)
+            return;
+
+        for(int i = 0; i < static_cast<int>(tickets.size()); i++)
+            if(tickets[i].getTicketNumber() == ticketNumber)
+                break;
+
+        cout << "Invalid ticket number!" << endl;
+        return;
+    }
+
+    Ticket* t = Ticket::getTicketByTicketNumber(ticketNumber);
+
+    if(t->getTicketNumber() == 0) {
+        cout << "Ticket not found!" << endl;
+        return;
+    }
+
+    t->remove();
 }
 
 void Passenger::FindFlight() {
@@ -133,20 +168,20 @@ void Passenger::FindFlight() {
     cout << "Would you like to search by destination or departure? ";
     cin >> input;
 
-    if(input == "destination") {
-        cout << "Please enter the destination: ";
-        cin >> input;
-        availableFlights = Flight::getFlightByArrivalAirport(input);
-    } else if(input == "departure") {
-        cout << "Please enter the departure location: ";
-        cin >> input;
-        availableFlights = Flight::getFlightByDepartureAirport(input);
-
-    } else {
-        cout << "Invalid input" << endl;
-        exit(0);
+    while(true) {
+        if(input == "destination") {
+            cout << "Please enter the destination: ";
+            cin >> input;
+            availableFlights = Flight::getFlightByArrivalAirport(input);
+            break;
+        } else if(input == "departure") {
+            cout << "Please enter the departure location: ";
+            cin >> input;
+            availableFlights = Flight::getFlightByDepartureAirport(input);
+            break;
+        } else
+            cout << "Invalid input" << endl;
     }
-
 
     if(availableFlights.size() > 0) {
         Flight::PrintFlightsVector(availableFlights);
@@ -166,10 +201,15 @@ void Passenger::FindFlight() {
 
                 f = &availableFlights[flightChoice - 1];
 
-                if(f->getNumberOfTickets() < f->getCapacity()) {
-                    this->flightNumber = f->getFlightNumber();
-                    f->incrementTickets();
-                } else {
+                string seat;
+
+                cout << "Please choose a seat: ";
+                cin >> seat;
+
+                if(f->numberOfTickets() < f->getCapacity())
+                    Ticket::create(f->getFlightNumber(), passportNumber, seat, 0.0);
+
+                else {
                     cout << "Flight full!";
                     exit(0);
                 }
@@ -186,7 +226,21 @@ void Passenger::FindFlight() {
     }
 }
 
+void Passenger::PrintTickets() {
+    vector<Ticket> tickets = Ticket::getAllTicketsOfPassenger(passportNumber);
 
+    if(tickets.size() == 0) {
+        cout << "No tickets found!" << endl;
+        return;
+    }
+
+    for(int i = 0; i < static_cast<int>(tickets.size()); i++)
+        cout
+                << i + 1 << ". "
+                << tickets[i].getTicketNumber() << "\t"
+                << tickets[i].getFlightNumber() << "\t"
+                << tickets[i].getSeatNumber() << endl;
+}
 
 vector<Passenger> Passenger::getAllPassengers() {
     vector<Passenger> passengers;
@@ -338,10 +392,10 @@ Passenger* Passenger::getPassengerByPhoneNumber(string Number) {
     } else
         return new Passenger(0, "", "", "", "", "", 0);
 }
+
 void Passenger::printPassenger() {
     cout << endl << endl << "Hello Passenger " << this->firstName << " " << this->lastName << endl << "Passport Number: " << this->passportNumber << endl << "Age: " << this->age << endl << "Address: " << address << endl << "PhoneNumber: " << this->phoneNumber << endl << "email: " << this->email << endl << endl;
 }
-
 
 void Passenger::remove() {
     // Execute a DELETE query to remove the passenger from the database
