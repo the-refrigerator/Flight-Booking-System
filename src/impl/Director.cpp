@@ -67,17 +67,18 @@ Director* Director::AddDirector() {
     cout << "Address: ";
     getline(cin, Address);
 
-do{
+    do {
         cout << "Age: ";
         getline(cin, strAge);
         istringstream iss(strAge);
-        if(iss >> number){
+
+        if(iss >> number) {
             validinput = true;
-            Age=stoi(strAge);            
+            Age = stoi(strAge);
 
         }
-    }while (validinput == false);
-    
+    } while (validinput == false);
+
 
     getline(cin, Number);
     cout << "Phone Number: ";
@@ -98,27 +99,26 @@ do{
 void Director::AddFlight() {
     string arrA, deptA, arrT, depT, strCap;
     int cap, number;
-    bool validinput=false;
+    bool validinput = false;
 
     cout << "Enter the following: " << endl;
 
-    getline(cin, deptA);
     cout << "Departure Airport: ";
     getline(cin, deptA);
 
     cout << "Arrival Airport: ";
     getline(cin, arrA);
 
-    do{
+    do {
         cout << "Capacity: ";
         getline(cin, strCap);
         istringstream iss(strCap);
-        if(iss >> number){
-            validinput = true;
-            cap=stoi(strCap);            
 
+        if(iss >> number) {
+            validinput = true;
+            cap = stoi(strCap);
         }
-    }while (validinput == false);
+    } while (validinput == false);
 
     while(!cin || cap <= 0) {
         cout << "Invalid input!" << endl;
