@@ -4,7 +4,6 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
 #include "../headers/Passenger.h"
 #include "../headers/utils.h"
 #include "../headers/Flight.h"
@@ -63,17 +62,18 @@ Passenger* Passenger::AddPassenger() {
     getline(cin, Address);
 
 
-    do{
+    do {
         cout << "Age: ";
         getline(cin, strAge);
         istringstream iss(strAge);
-        if(iss >> number){
+
+        if(iss >> number) {
             validinput = true;
-            Age=stoi(strAge);            
+            Age = stoi(strAge);
 
         }
-    }while (validinput == false);
-    
+    } while (validinput == false);
+
 
     getline(cin, Number);
     cout << "Phone Number: ";
@@ -151,14 +151,15 @@ void Passenger::DeleteTicket() {
         cin >> ticketNumber;
 
         if(ticketNumber <= 0)
-            return;
+            continue;
 
-        for(int i = 0; i < static_cast<int>(tickets.size()); i++)
-            if(tickets[i].getTicketNumber() == ticketNumber)
-                break;
+        if(ticketNumber > static_cast<int>(tickets.size())) {
+            cout << "Invalid ticket number!" << endl;
+            continue;
+        }
 
-        cout << "Invalid ticket number!" << endl;
-        return;
+        ticketNumber = tickets[ticketNumber - 1].getTicketNumber();
+        break;
     }
 
     Ticket* t = Ticket::getTicketByTicketNumber(ticketNumber);
@@ -178,7 +179,7 @@ void Passenger::FindFlight() {
     Flight* f = nullptr;
 
     cout << "Would you like to search by destination or departure? ";
-    cin >> input;
+    getline(cin, input);
 
     while(true) {
         if(input == "destination") {
@@ -191,9 +192,10 @@ void Passenger::FindFlight() {
             cin >> input;
             availableFlights = Flight::getFlightByDepartureAirport(input);
             break;
-        } else
+        } else {
             cout << "Invalid input" << endl;
-            
+            getline(cin, input);
+        }
     }
 
     if(availableFlights.size() > 0) {
@@ -205,37 +207,44 @@ void Passenger::FindFlight() {
         } while(toupper(choice) != 'Y' && toupper(choice) != 'N');
 
         if(toupper(choice) == 'Y') {
-            int flightChoice;
+            while(true) {
+                int flightChoice;
 
-            cout << "Please choose a flight: ";
-            cin >> flightChoice;
+                cout << "Please choose a flight (0 to exit): ";
+                cin >> flightChoice;
 
-            if(flightChoice > 0 && flightChoice <= static_cast<int>(availableFlights.size())) {
-
-                f = &availableFlights[flightChoice - 1];
-
-                string seat;
-
-                cout << "Please choose a seat: ";
-                cin >> seat;
-
-                if(f->numberOfTickets() < f->getCapacity())
-                    Ticket::create(f->getFlightNumber(), passportNumber, seat, 0.0);
-
-                else {
-                    cout << "Flight full!";
-                    exit(0);
+                while(!cin) {
+                    cout << "Invalid input!" << endl;
+                    cin.clear();
+                    cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+                    cin >> flightChoice;
                 }
-            } else {
-                cout << "Invalid choice" << endl;
-                exit(0);
-            }
 
+                if (flightChoice == 0)
+                    return;
+
+                if(flightChoice > 0 && flightChoice <= static_cast<int>(availableFlights.size())) {
+                    f = &availableFlights[flightChoice - 1];
+                    string seat;
+
+                    cout << "Please choose a seat: ";
+                    getline(cin, seat);
+
+                    if(f->numberOfTickets() < f->getCapacity())
+                        Ticket::create(f->getFlightNumber(), passportNumber, seat, 0.0);
+
+                    else {
+                        cout << "Flight full!";
+                        return;
+                    }
+                } else
+                    cout << "Invalid choice" << endl;
+            }
         } else
-            exit(0);
+            return;
     } else {
         cout << "No flights found" << endl;
-        exit(0);
+        return;
     }
 }
 

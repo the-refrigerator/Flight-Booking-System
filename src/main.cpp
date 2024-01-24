@@ -71,9 +71,7 @@ void PassengerAlgorithm() {
 
             else
                 throw "User not found!";
-        }
-
-        catch(const char* s) {
+        } catch(const char* s) {
             cerr << s << endl;
             exit(0);
         }
@@ -82,6 +80,10 @@ void PassengerAlgorithm() {
         cout << "Adding a new user:" << endl;
         p = Passenger::AddPassenger();
     }
+
+    cout << "Press any key to continue..." << endl;
+    cin.get();
+    cin.ignore();
 
     while(true) {
         clear_screen();
@@ -105,7 +107,7 @@ void PassengerAlgorithm() {
                 break;
 
             case 3:
-                p->Passenger::FindFlight();
+                p->FindFlight();
                 break;
 
             case 4:
@@ -200,7 +202,7 @@ void DirectorAlgorithm() {
             cin.ignore();
         }
     } else
-        cout << "Wrong password!"<<endl;
+        cout << "Wrong password!" << endl;
 
 }
 
