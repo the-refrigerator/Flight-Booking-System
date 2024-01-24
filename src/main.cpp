@@ -200,7 +200,7 @@ void DirectorAlgorithm() {
             cin.ignore();
         }
     } else
-        cout << "Wrong password!";
+        cout << "Wrong password!"<<endl;
 
 }
 

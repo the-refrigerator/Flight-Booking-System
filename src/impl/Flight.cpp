@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include "../headers/DataBaseConnection.h"
 #include "../headers/Flight.h"
 #include "../headers/Ticket.h"
@@ -193,19 +194,19 @@ void Flight::PrintFlights() {
 
     cout
             << "List of flights: " << endl
-            << "Flight\tFlight Number\t\tDeparture Airport\tDeparture Time\tArrival Airport\tArrival Time\tAvailable Tickets" << endl;
+            <<setw(10)<< "Flight"<<setw(25)<<"Flight Number"<<setw(25)<<"\tDeparture Airport"<<setw(25)<<"\tDeparture Time"<<setw(25)<<"\tArrival Airport"<<setw(25)<<"Arrival Time"<<setw(25)<<"Available Tickets" << endl;
 
     for(int i = 0; i < static_cast<int>(availableFlights.size()); i++)
-        cout
-                << i + 1
-                << "\t"
+        cout<<
+                setw(10)<< i + 1
+                << setw(25)
                 << availableFlights[i].flightNumber
-                << "\t\t"
+                << setw(25) 
                 << availableFlights[i].departureAirport
-                << "\t\t\t"
-                << availableFlights[i].departureTime << "\t"
-                << availableFlights[i].arrivalAirport << "\t\t"
-                << availableFlights[i].arrivalTime << "\t"
+                << setw(25) 
+                << availableFlights[i].departureTime << setw(25) 
+                << availableFlights[i].arrivalAirport << setw(25) 
+                << availableFlights[i].arrivalTime << setw(25) 
                 << availableFlights[i].capacity - availableFlights[i].numberOfTickets() << endl;
 }
 

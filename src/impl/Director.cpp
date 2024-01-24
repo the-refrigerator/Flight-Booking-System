@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 #include "../headers/Director.h"
 #include "../headers/utils.h"
 #include "../headers/Flight.h"
@@ -49,9 +50,9 @@ Director* Director::create(string firstName, string lastName, string address, st
 }
 
 Director* Director::AddDirector() {
-    string Fname, Lname, Address, Number, Email;
-    int Age;
-    bool isEmail = false;
+    string Fname, Lname, Address, Number, Email, strAge;
+    int Age, number;
+    bool isEmail = false, validinput = false;
 
 
     cout << "Please fill the following:" << endl;
@@ -66,8 +67,17 @@ Director* Director::AddDirector() {
     cout << "Address: ";
     getline(cin, Address);
 
-    cout << "Age: ";
-    cin >> Age;
+do{
+        cout << "Age: ";
+        getline(cin, strAge);
+        istringstream iss(strAge);
+        if(iss >> number){
+            validinput = true;
+            Age=stoi(strAge);            
+
+        }
+    }while (validinput == false);
+    
 
     getline(cin, Number);
     cout << "Phone Number: ";
@@ -86,19 +96,29 @@ Director* Director::AddDirector() {
 }
 
 void Director::AddFlight() {
-    string arrA, deptA, arrT, depT;
-    int cap;
+    string arrA, deptA, arrT, depT, strCap;
+    int cap, number;
+    bool validinput=false;
 
     cout << "Enter the following: " << endl;
 
+    getline(cin, deptA);
     cout << "Departure Airport: ";
-    cin >> deptA;
+    getline(cin, deptA);
 
     cout << "Arrival Airport: ";
-    cin >> arrA;
+    getline(cin, arrA);
 
-    cout << "Capacity: ";
-    cin >> cap;
+    do{
+        cout << "Capacity: ";
+        getline(cin, strCap);
+        istringstream iss(strCap);
+        if(iss >> number){
+            validinput = true;
+            cap=stoi(strCap);            
+
+        }
+    }while (validinput == false);
 
     while(!cin || cap <= 0) {
         cout << "Invalid input!" << endl;
@@ -107,6 +127,7 @@ void Director::AddFlight() {
         cin >> cap;
     }
 
+    getline(cin, depT);
     cout << "Departure Time: ";
     getline(cin, depT);
 

@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include "../headers/Passenger.h"
 #include "../headers/utils.h"
 #include "../headers/Flight.h"
@@ -46,9 +48,9 @@ Passenger* Passenger::create(string firstName, string lastName, string address, 
 
 Passenger* Passenger::AddPassenger() {
     cout << "Please enter the following:" << endl;
-    string Fname, Lname, Address, Number, Email;
-    int Age;
-    bool isEmail = false;
+    string Fname, Lname, Address, Number, Email, strAge;
+    int Age, number;
+    bool isEmail = false, validinput = false;
 
     getline(cin, Fname);
     cout << "Name: ";
@@ -60,8 +62,18 @@ Passenger* Passenger::AddPassenger() {
     cout << "Address: ";
     getline(cin, Address);
 
-    cout << "Age: ";
-    cin >> Age;
+
+    do{
+        cout << "Age: ";
+        getline(cin, strAge);
+        istringstream iss(strAge);
+        if(iss >> number){
+            validinput = true;
+            Age=stoi(strAge);            
+
+        }
+    }while (validinput == false);
+    
 
     getline(cin, Number);
     cout << "Phone Number: ";
@@ -181,6 +193,7 @@ void Passenger::FindFlight() {
             break;
         } else
             cout << "Invalid input" << endl;
+            
     }
 
     if(availableFlights.size() > 0) {
