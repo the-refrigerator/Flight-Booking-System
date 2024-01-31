@@ -103,6 +103,8 @@ void Director::AddFlight() {
 
     cout << "Enter the following: " << endl;
 
+    getline(cin, deptA);
+
     cout << "Departure Airport: ";
     getline(cin, deptA);
 

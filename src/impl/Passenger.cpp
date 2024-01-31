@@ -227,6 +227,7 @@ void Passenger::FindFlight() {
                 if(flightChoice > 0 && flightChoice <= static_cast<int>(availableFlights.size())) {
                     f = &availableFlights[flightChoice - 1];
                     string seat;
+                    getline(cin, seat);
 
                     cout << "Please choose a seat: ";
                     getline(cin, seat);
