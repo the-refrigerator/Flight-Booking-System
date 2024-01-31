@@ -179,17 +179,18 @@ void Passenger::FindFlight() {
     Flight* f = nullptr;
 
     cout << "Would you like to search by destination or departure? ";
+    cin.ignore();
     getline(cin, input);
 
     while(true) {
         if(input == "destination") {
             cout << "Please enter the destination: ";
-            cin >> input;
+            getline(cin, input);
             availableFlights = Flight::getFlightByArrivalAirport(input);
             break;
         } else if(input == "departure") {
             cout << "Please enter the departure location: ";
-            cin >> input;
+            getline(cin, input);
             availableFlights = Flight::getFlightByDepartureAirport(input);
             break;
         } else {
